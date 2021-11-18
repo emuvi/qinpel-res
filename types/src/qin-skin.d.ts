@@ -1,0 +1,53 @@
+import { QinDimension, QinGrandeur } from "./qin-head";
+export declare const QinStyles: {
+    ColorBack: string;
+    ColorMenu: string;
+    ColorFont: string;
+    FontName: string;
+    FontSize: string;
+};
+declare function styleAsBody(el: HTMLElement): void;
+declare function styleAsEdit(el: HTMLElement): void;
+declare function styleMaxSizeForNotOverFlow(el: HTMLElement, parent?: HTMLElement): void;
+declare function styleSize(el: HTMLElement, size?: QinDimension | QinGrandeur): void;
+declare function styleFlexMax(el: HTMLElement): void;
+declare function styleFlexMin(el: HTMLElement): void;
+declare function getWindowSize(): QinDimension;
+declare function getWindowSizeStyle(): QinGrandeur;
+declare function hideAllIFrames(): void;
+declare function showAllIFrames(): void;
+declare function disableSelection(element: HTMLElement): void;
+declare function clearSelection(): void;
+declare function isElementVisibleInScroll(element: HTMLElement): boolean;
+declare function getDimensionSize(size: QinGrandeur): QinDimension;
+declare function getDimensionSmall(): QinDimension;
+declare function getDimensionMedium(): QinDimension;
+declare function getDimensionLarge(): QinDimension;
+export declare const QinSkin: {
+    styles: {
+        ColorBack: string;
+        ColorMenu: string;
+        ColorFont: string;
+        FontName: string;
+        FontSize: string;
+    };
+    styleAsBody: typeof styleAsBody;
+    styleAsEdit: typeof styleAsEdit;
+    styleMaxSizeForNotOverFlow: typeof styleMaxSizeForNotOverFlow;
+    styleSize: typeof styleSize;
+    styleFlexMax: typeof styleFlexMax;
+    styleFlexMin: typeof styleFlexMin;
+    getWindowSize: typeof getWindowSize;
+    getWindowSizeStyle: typeof getWindowSizeStyle;
+    hideAllIFrames: typeof hideAllIFrames;
+    showAllIFrames: typeof showAllIFrames;
+    disableSelection: typeof disableSelection;
+    clearSelection: typeof clearSelection;
+    isElementVisibleInScroll: typeof isElementVisibleInScroll;
+    getDimensionSize: typeof getDimensionSize;
+    getDimensionSmall: typeof getDimensionSmall;
+    getDimensionMedium: typeof getDimensionMedium;
+    getDimensionLarge: typeof getDimensionLarge;
+};
+export {};
+//# sourceMappingURL=qin-skin.d.ts.map
