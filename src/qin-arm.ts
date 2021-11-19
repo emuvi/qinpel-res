@@ -201,9 +201,9 @@ function addKeyAction(element: HTMLElement, action: QinAction) {
 }
 
 function addAction(element: HTMLElement, action: QinAction) {
-    element.onkeydown = actionKeyboard;
-    element.onmousedown = actionMouse;
-    element.ontouchstart = actionTouch;
+    element.onkeyup = actionKeyboard;
+    element.onmouseup = actionMouse;
+    element.ontouchend = actionTouch;
 
     function actionKeyboard(ev: KeyboardEvent) {
         let qinEvent = new QinEvent().setFromKeyboard(ev);
