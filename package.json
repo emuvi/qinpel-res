@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Qinpel Resources - A wide set of functionalities available in the Qinpel platform.",
   "main": "./build/all.js",
-  "types": "./types",
+  "types": "./types/all.d.ts",
   "scripts": {
     "start": "bash -v test.sh"
   },
