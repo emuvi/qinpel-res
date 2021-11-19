@@ -1,3 +1,3 @@
 bash -v clean.sh
-py all.py
+py src/all.py
 tsc -p tsconfig.json

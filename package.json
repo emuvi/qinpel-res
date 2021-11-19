@@ -2,7 +2,8 @@
   "name": "qinpel-res",
   "version": "0.1.0",
   "description": "Qinpel Resources - A wide set of functionalities available in the Qinpel platform.",
-  "main": "all.js",
+  "main": "./build/all.js",
+  "types": "./types",
   "scripts": {
     "start": "bash -v test.sh"
   },

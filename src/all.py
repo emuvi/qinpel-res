@@ -4,8 +4,9 @@ import os
 def getSourceOrigins() -> list[str]:
     result = []
     for inside in os.listdir("./src"):
-        if inside.endswith(".ts"):
+        if not inside == "all.ts" and inside.endswith(".ts"):
             result.append(inside)
+
     return result
 
 
@@ -24,7 +25,7 @@ def getOriginLines(origin: str) -> list[str]:
 
 
 def saveAllFile(lines: list[str]):
-    writer = open('all.ts', 'w')
+    writer = open('src/all.ts', 'w')
     writer.writelines(lines)
     writer.close()
 
@@ -66,7 +67,7 @@ def getOriginExports(origin: str) -> list[str]:
 
 
 def getOriginFrom(origin: str) -> str:
-    result = " } from \"./src/"
+    result = " } from \"./"
     pos = origin.rfind(".")
     if pos > -1:
         origin = origin[0:pos]
@@ -97,4 +98,4 @@ if __name__ == "__main__":
             exportLine += "\n"
             lines.append(exportLine);
     saveAllFile(lines)
-    print("Finish to generate the source code of all.ts")
+    print("Finish to generate the source code of src/all.ts")
