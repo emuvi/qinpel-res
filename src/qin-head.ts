@@ -60,7 +60,7 @@ function logError(error: any, origin: string) {
 }
 
 function getErrorMessage(error: any, origin: string) {
-    return getEspecialMessage("Problem with:", error, origin);
+    return getTreatMessage("Problem with:", error, origin);
 }
 
 function logWarning(error: any, origin: string) {
@@ -68,7 +68,7 @@ function logWarning(error: any, origin: string) {
 }
 
 function getWarningMessage(error: any, origin: string) {
-    return getEspecialMessage("Checkout this:", error, origin);
+    return getTreatMessage("Checkout this:", error, origin);
 }
 
 function logSupport(error: any, origin: string) {
@@ -76,10 +76,10 @@ function logSupport(error: any, origin: string) {
 }
 
 function getSupportMessage(error: any, origin: string) {
-    return getEspecialMessage("Need Support on:", error, origin);
+    return getTreatMessage("Need Support on:", error, origin);
 }
 
-function getEspecialMessage(prefix: string, error: any, origin: string) {
+function getTreatMessage(prefix: string, error: any, origin: string) {
     var result = prefix + (error ? " " + error.toString() : "");
     if (error.response && error.response.data) {
         var errorData = error.response.data;
@@ -95,7 +95,7 @@ function getEspecialMessage(prefix: string, error: any, origin: string) {
     if (origin) {
         result += " - Origin: " + origin;
     }
-    let stack = (new Error("")).stack;
+    const stack = (new Error("")).stack;
     if (stack) {
         result += " - Stack: " + stack;
     }
@@ -120,5 +120,6 @@ export const QinHead = {
     getWarningMessage,
     logSupport,
     getSupportMessage,
+    getTreatMessage,
     toggleDevTools,
 };
