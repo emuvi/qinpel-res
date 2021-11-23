@@ -1,5 +1,5 @@
-export { QinDragCalls, QinEvent, QinAction, 
-         QinArm } from "./qin-arm";
+export { QinEvent, QinAction, QinWaiter, 
+         QinDragCalls, QinArm } from "./qin-arm";
 
 export { QinBody } from "./qin-body";
 

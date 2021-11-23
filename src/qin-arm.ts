@@ -1,14 +1,5 @@
 import { QinPoint } from "./qin-head";
 import { QinSkin } from "./qin-skin";
-import { QinSoul } from "./qin-soul";
-
-export class QinDragCalls {
-    onDouble?: CallableFunction;
-    onLong?: CallableFunction;
-    onStart?: CallableFunction;
-    onMove?: CallableFunction;
-    onEnd?: CallableFunction;
-}
 
 export class QinEvent {
 
@@ -116,6 +107,16 @@ export class QinEvent {
 };
 
 export type QinAction = (event: QinEvent) => void;
+
+export type QinWaiter = (result: any) => void;
+
+export class QinDragCalls {
+    onDouble?: CallableFunction;
+    onLong?: CallableFunction;
+    onStart?: CallableFunction;
+    onMove?: CallableFunction;
+    onEnd?: CallableFunction;
+}
 
 function stopEvent(event: any) {
     if (event.preventDefault) {

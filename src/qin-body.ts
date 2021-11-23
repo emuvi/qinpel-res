@@ -77,9 +77,45 @@ function unmaskSpecialChars(fromText: string): string {
         .replace("\\t", "\t");
 }
 
+function parseParameters(source: string): string[] {
+    let result = [];
+    let open = false;
+    let actual = "";
+    for (const letter of Array.from(source)) {
+        if (open) {
+            if (letter == '"') {
+                open = false;
+                if (actual) {
+                    result.push(actual);
+                    actual = "";
+                }
+            } else {
+                actual += letter;
+            }
+        } else {
+            if (letter == '"') {
+                open = true;
+                if (actual) {
+                    result.push(actual);
+                    actual = "";
+                }
+            } else if (letter == ' ') {
+                if (actual) {
+                    result.push(actual);
+                    actual = "";
+                }
+            } else {
+                actual += letter;
+            }
+        }
+    }
+    return result;
+}
+
 export const QinBody = {
     getTextLines,
     getCSVRows,
     maskSpecialChars,
     unmaskSpecialChars,
+    parseParameters,
 };
