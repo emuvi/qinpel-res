@@ -56,6 +56,9 @@ def getOriginExports(origin: str) -> list[str]:
         identifier = getIdentifier(line, "export type ")
         if identifier:
             result.append(identifier)
+        identifier = getIdentifier(line, "export interface ")
+        if identifier:
+            result.append(identifier)
         identifier = getIdentifier(line, "export function ")
         if identifier:
             result.append(identifier)
