@@ -1,13 +1,12 @@
 {
   "name": "qinpel-res",
   "version": "0.1.0",
-  "description": "Qinpel Resources - A wide set of functionalities available in the Qinpel platform.",
+  "description": "Qinpel Resources - A wide set of functionalities available for the Qinpel (Quick Interface for Pointel) Platform.",
+  "author": "Éverton M. Vieira",
+  "license": "LGPL-3.0-only",
   "main": "./build/all.js",
   "types": "./types/all.d.ts",
   "scripts": {
     "start": "bash -v test.sh"
-  },
-  "keywords": [],
-  "author": "Éverton M. Vieira",
-  "license": "LGPL-3.0-only"
+  }
 }
