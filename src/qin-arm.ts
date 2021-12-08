@@ -190,17 +190,6 @@ function isKeySpace(ev: KeyboardEvent): boolean {
     return isKeyInList(ev, [" ", "space", "spacebar"]) || ev.keyCode === 32;
 }
 
-function addKeyAction(element: HTMLElement, action: QinAction) {
-    element.onkeydown = actionKeyboard;
-
-    function actionKeyboard(ev: KeyboardEvent) {
-        if (isKeyEnter(ev)) {
-            action(new QinEvent().setFromKeyboard(ev));
-            return stopEvent(ev);
-        }
-    }
-}
-
 function addAction(element: HTMLElement, action: QinAction) {
     element.onkeyup = actionKeyboard;
     element.onmouseup = actionMouse;
@@ -234,6 +223,27 @@ function addAction(element: HTMLElement, action: QinAction) {
         } else {
             return true;
         }
+    }
+}
+
+function addActionEnter(element: HTMLElement, action: QinAction) {
+    element.onkeydown = actionKeyboard;
+
+    function actionKeyboard(ev: KeyboardEvent) {
+        if (isKeyEnter(ev)) {
+            action(new QinEvent().setFromKeyboard(ev));
+            return stopEvent(ev);
+        }
+    }
+}
+
+function putActionDefault(button: HTMLButtonElement, forInputs: HTMLInputElement[]) {
+    for (const input of forInputs) {
+        input.addEventListener("keyup", e => {
+            if (isKeyEnter(e)) {
+                button.onkeyup(e);
+            }
+        })
     }
 }
 
@@ -433,8 +443,9 @@ export const QinArm = {
     isKeyInList,
     isKeyEnter,
     isKeySpace,
-    addKeyAction,
     addAction,
+    addActionEnter,
+    putDefault,
     addMover,
     addResizer,
     addScroller,
