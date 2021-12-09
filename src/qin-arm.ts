@@ -191,9 +191,9 @@ function isKeySpace(ev: KeyboardEvent): boolean {
 }
 
 function addAction(element: HTMLElement, action: QinAction) {
-    element.onkeyup = actionKeyboard;
-    element.onmouseup = actionMouse;
-    element.ontouchend = actionTouch;
+    element.addEventListener("keyup", actionKeyboard);
+    element.addEventListener("mouseup", actionMouse);
+    element.addEventListener("ontouchend", actionTouch);
 
     function actionKeyboard(ev: KeyboardEvent) {
         let qinEvent = new QinEvent().setFromKeyboard(ev);
@@ -237,12 +237,16 @@ function addActionEnter(element: HTMLElement, action: QinAction) {
     }
 }
 
-function putActionDefault(button: HTMLButtonElement, forInputs: HTMLInputElement[]) {
-    for (const input of forInputs) {
-        input.addEventListener("keyup", e => {
-            if (isKeyEnter(e)) {
-                button.onkeyup(e);
-            }
+function putActionProxy(destiny: HTMLElement, origins: HTMLInputElement[]) {
+    for (const origin of origins) {
+        origin.addEventListener("keyup", e => {
+            destiny.onkeydown(e);
+        })
+        origin.addEventListener("mouseup", e => {
+            destiny.onmouseup(e);
+        })
+        origin.addEventListener("touchend", e => {
+            destiny.ontouchend(e);
         })
     }
 }
@@ -445,7 +449,7 @@ export const QinArm = {
     isKeySpace,
     addAction,
     addActionEnter,
-    putDefault,
+    putActionProxy,
     addMover,
     addResizer,
     addScroller,
