@@ -7,7 +7,6 @@
   "main": "./build/all.js",
   "types": "./types/all.d.ts",
   "scripts": {
-    "start": "bash -v test.sh",
     "build": "bash -v build.sh"
   }
 }
