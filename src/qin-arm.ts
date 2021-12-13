@@ -191,9 +191,12 @@ function isKeySpace(ev: KeyboardEvent): boolean {
 }
 
 function addAction(element: HTMLElement, action: QinAction) {
+	element.addEventListener("keydown", stopEvent);
     element.addEventListener("keyup", actionKeyboard);
+	element.addEventListener("mousedown", stopEvent);
     element.addEventListener("mouseup", actionMouse);
-    element.addEventListener("ontouchend", actionTouch);
+	element.addEventListener("touchstart", stopEvent);
+    element.addEventListener("touchend", actionTouch);
 
     function actionKeyboard(ev: KeyboardEvent) {
         let qinEvent = new QinEvent().setFromKeyboard(ev);
