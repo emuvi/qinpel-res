@@ -1,15 +1,15 @@
-export { QinEvent, QinAction, QinWaiter, 
-         QinDragCalls, QinArm } from "./qin-arm";
-
-export { QinBody } from "./qin-body";
-
-export { QinFilesNature, QinFilesOperation, QinFilesDescriptor, 
-         QinFoot } from "./qin-foot";
+export { QinStyles, QinSkin } from "./qin-skin";
 
 export { QinPoint, QinDimension, QinBounds, 
          QinGrandeur, QinHead } from "./qin-head";
 
-export { QinStyles, QinSkin } from "./qin-skin";
+export { QinBody } from "./qin-body";
 
 export { QinSoul } from "./qin-soul";
+
+export { QinEvent, QinAction, QinWaiter, 
+         QinWaiters, QinDragCalls, QinArm } from "./qin-arm";
+
+export { QinFilesNature, QinFilesOperation, QinFilesDescriptor, 
+         QinFoot } from "./qin-foot";
 

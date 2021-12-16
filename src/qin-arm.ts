@@ -110,6 +110,31 @@ export type QinAction = (event: QinEvent) => void;
 
 export type QinWaiter = (result: any) => void;
 
+export class QinWaiters {
+
+	private waiters: QinWaiter[];
+
+	public constructor(initial?: QinWaiter[]) {
+		this.waiters = initial ? initial : [];
+	}
+
+	public addWaiter(waiter: QinWaiter): QinWaiters {
+        this.waiters.push(waiter);
+        return this;
+    }
+
+    public hasWaiter(): boolean {
+        return this.waiters.length > 0;
+    }
+
+    public sendWaiters(result: any) {
+        for (const waiter of this.waiters) {
+            waiter(result);
+        }
+    }
+	
+}
+
 export class QinDragCalls {
     onDouble?: CallableFunction;
     onLong?: CallableFunction;
