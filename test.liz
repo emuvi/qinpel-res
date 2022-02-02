@@ -1,0 +1,9 @@
+#!/bin/liz
+print("Cleaning...")
+liz.rm("node_modules")
+liz.rm("build")
+liz.rm("types")
+print("Installing...")
+liz.cmd("npm", {"install"})
+print("Generating...")
+liz.run("./mkall.liz")
