@@ -1,0 +1,5 @@
+#!/bin/liz
+print("Removing all build files...")
+liz.rm("node_modules")
+liz.rm("build")
+liz.rm("types")

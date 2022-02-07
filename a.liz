@@ -1,0 +1,4 @@
+abc = "testing"
+print(abc)
+liz.race("b")
+liz.run("c")
