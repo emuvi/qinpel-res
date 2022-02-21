@@ -1,5 +1,7 @@
 #!/bin/liz
-print("Removing all build files...")
+print("Cleaning...")
 liz.rm("node_modules")
 liz.rm("build")
 liz.rm("types")
+liz.rm("package-lock.json")
+print("Done Clean!")

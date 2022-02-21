@@ -1,10 +1,4 @@
 #!/bin/liz
-print("Cleaning...")
-liz.race("clean.liz")
-print("Installing...")
-liz.cmd("npm", {"install"})
-print("Generating...")
-liz.race("mkall.liz")
-print("Compiling...")
-liz.cmd("tsc", {})
-print("Finished!")
+print("Testing...")
+liz.run("build")
+print("Done Test!")

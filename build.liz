@@ -1,0 +1,6 @@
+#!/bin/liz
+print("Building...")
+liz.run("mkall")
+liz.cmd("npm", {"install"})
+liz.cmd("tsc", {"-p", "tsconfig.json"})
+print("Done Build!")

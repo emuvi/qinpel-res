@@ -17,4 +17,3 @@ export { QinFilesNature } from './qin-foot';
 export { QinFilesOperation } from './qin-foot';
 export { QinFilesDescriptor } from './qin-foot';
 export { QinFoot } from './qin-foot';
-;
