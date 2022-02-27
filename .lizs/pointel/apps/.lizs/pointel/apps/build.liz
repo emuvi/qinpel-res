@@ -1,0 +1,11 @@
+#!/bin/liz
+print("Building...")
+liz.run("mkall")
+if liz.is_win() then
+  npm = "npm.cmd"
+else
+  npm = "npm"
+end
+liz.cmd(npm, {"install"})
+liz.cmd("tsc", {"-p", "tsconfig.json"})
+print("Done Build!")

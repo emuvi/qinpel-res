@@ -1,4 +1,0 @@
-#!/bin/liz
-print("Testing...")
-liz.run("build")
-print("Done Test!")
