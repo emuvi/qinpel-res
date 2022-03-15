@@ -1,0 +1,10 @@
+#!/bin/liz
+
+print("Testing...")
+Liz.run("build")
+if Liz.has("test.liz") then 
+    print("Testing specifics...")
+    Liz.run_wd("test.liz") 
+    print("Done test specifics...")
+end
+print("Done test application")

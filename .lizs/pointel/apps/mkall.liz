@@ -1,4 +1,4 @@
-#!/bin/Liz
+#!/bin/liz
 
 Lines = {}
 Search_for = {
@@ -37,5 +37,5 @@ Sources = Liz.path_list_files_ext_in("./src", ".ts")
 for _, source in pairs(Sources) do
     if not (source == "./src/all.ts") then GetAll(source) end
 end
-Liz.write_Lines("./src/all.ts", Lines)
+Liz.write_lines("./src/all.ts", Lines)
 print("Done make 'src/all.ts'")
