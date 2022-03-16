@@ -3,6 +3,13 @@
 local wd = Liz.wd()
 local project = Liz.path_name(wd)
 print("Testing " .. project .. " ...")
+
+if Liz.has("pre-test.liz") then
+    print("Running pre test...")
+    Liz.run_wd("pre-test.liz")
+    print("Done pre test")
+end
+
 Liz.run("build")
 
 if Liz.is_dir("public") then
@@ -34,10 +41,10 @@ if Liz.is_dir("public") then
     Liz.cp("public", pro_dest)
 end
 
-if Liz.has("test.liz") then
-    print("Testing specifics...")
-    Liz.run_wd("test.liz")
-    print("Done test specifics...")
+if Liz.has("pos-test.liz") then
+    print("Running post test...")
+    Liz.run_wd("pos-test.liz")
+    print("Done post test")
 end
 
 print("Done test application")
