@@ -2,12 +2,17 @@
 
 Lines = {}
 Search_for = {
-    "export class", "export enum", "export type", "export interface",
-    "export function", "export const"
+    "export class", "export abstract class", "export type", "export interface",
+    "export enum", "export const", "export function"
 }
 
 function GetName(found_line)
-    local result = Liz.split_spaces(found_line)[3]
+    local result = Liz.split_spaces(found_line)
+    if Liz.contains(found_line, "abstract") then
+        result = result[4]
+    else
+        result = result[3]
+    end
     if Liz.contains(result, "(") then result = Liz.split(result, "(")[1] end
     return result
 end
