@@ -60,7 +60,7 @@ function getPathJoin(pathA: string, pathB: string): string {
     }
 }
 
-function getRoot(path: string): string {
+function getParent(path: string): string {
     if (path) {
         let separator = getSeparator(path);
         let last = path.lastIndexOf(separator);
@@ -163,7 +163,7 @@ export const QinFoot = {
     isLocalHost,
     getSeparator,
     getPathJoin,
-    getRoot,
+    getParent,
     getStem,
     getFileExtension,
     isFileApp,
