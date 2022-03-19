@@ -24,9 +24,9 @@ function styleAsEdit(el: HTMLElement) {
     el.style.margin = "1px";
     el.style.padding = "3px";
     el.style.outline = "none";
-    el.style.border = "1px solid #270036";
+    el.style.border = "1px solid #180027";
     el.style.borderRadius = "3px";
-    el.style.color = "#270036";
+    el.style.color = "#180027";
     el.style.backgroundColor = "#ffffff";
     el.style.fontFamily = "SourceSansPro";
     el.style.fontSize = "16px";
@@ -38,7 +38,7 @@ function styleAsEdit(el: HTMLElement) {
     el.addEventListener("focusout", () => {
         el.style.outline = "none";
         el.style.backgroundColor = "#ffffff";
-        el.style.border = "1px solid #270036";
+        el.style.border = "1px solid #180027";
     });
 }
 
