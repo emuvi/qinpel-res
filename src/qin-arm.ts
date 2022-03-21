@@ -4,14 +4,18 @@ import { QinSkin } from "./qin-skin";
 export class QinEvent {
   private _start: boolean;
   private _event: KeyboardEvent | MouseEvent | TouchEvent = null;
+  private _point: QinPoint = null;
   private _stop: boolean = false;
 
   public constructor(
-    start: boolean,
+    isStart: boolean,
     event: KeyboardEvent | MouseEvent | TouchEvent
   ) {
-    this._start = start;
+    this._start = isStart;
     this._event = event;
+    if (event instanceof MouseEvent || event instanceof TouchEvent) {
+      this._point = makeEventPointer(isStart, event);
+    }
   }
 
   public get isStart(): boolean {
@@ -51,6 +55,13 @@ export class QinEvent {
     return this._event?.metaKey;
   }
 
+  public get keyTyped(): string {
+    if (this._event instanceof KeyboardEvent) {
+      return this._event.key;
+    }
+    return null;
+  }
+
   public get isEnter(): boolean {
     if (this._event instanceof KeyboardEvent) {
       return isKeyEnter(this._event);
@@ -72,17 +83,31 @@ export class QinEvent {
     return false;
   }
 
-  public isDouble: boolean = false; // [TODO]
-  public isLong: boolean = false; // [TODO]
-
-  public get keyTyped(): string {
-    if (this._event instanceof KeyboardEvent) {
-      return this._event.key;
+  public get isDouble(): boolean {
+    if (
+      this._event instanceof MouseEvent ||
+      this._event instanceof TouchEvent
+    ) {
+      return isEventPointerDouble(this._start, this._event);
     }
-    return null;
+    return false;
   }
 
-  public get pointOnX(): number {
+  public get isLong(): boolean {
+    if (
+      this._event instanceof MouseEvent ||
+      this._event instanceof TouchEvent
+    ) {
+      return isEventPointerLong(this._start, this._event);
+    }
+    return false;
+  }
+
+  public get point(): QinPoint {
+    return this._point;
+  }
+
+  public get pointX(): number {
     if (this._event instanceof MouseEvent) {
       return this._event.clientX;
     } else if (this._event instanceof TouchEvent) {
@@ -94,7 +119,7 @@ export class QinEvent {
     return null;
   }
 
-  public get pointOnY(): number {
+  public get pointY(): number {
     if (this._event instanceof MouseEvent) {
       return this._event.clientY;
     } else if (this._event instanceof TouchEvent) {
@@ -248,7 +273,7 @@ function stopEvent(event: any) {
 var lastEventPointer: MouseEvent | TouchEvent = null;
 
 function makeEventPointer(
-  isDown: boolean,
+  isStart: boolean,
   ev: MouseEvent | TouchEvent
 ): QinPoint {
   const result = {
@@ -261,26 +286,23 @@ function makeEventPointer(
       result.posY = ev.clientY;
     }
   } else if (ev instanceof TouchEvent) {
-    if (
-      ev.touches &&
-      ev.touches[0] &&
-      (ev.touches[0].clientX || ev.touches[0].clientY)
-    ) {
-      result.posX = ev.touches[0].clientX;
-      result.posY = ev.touches[0].clientY;
+    if (ev.touches && this._event.touches.length > 1) {
+      let index = Math.floor(this._event.touches.length / 2);
+      result.posX = ev.touches[index].clientX;
+      result.posY = ev.touches[index].clientY;
     }
   }
-  if (isDown) {
+  if (isStart) {
     lastEventPointer = ev;
   }
   return result;
 }
 
 function isEventPointerDouble(
-  isDown: boolean,
+  isStart: boolean,
   ev: MouseEvent | TouchEvent
 ): boolean {
-  if (!isDown || lastEventPointer == null || ev == null) {
+  if (!isStart || lastEventPointer == null || ev == null) {
     return false;
   }
   const timeDif = ev.timeStamp - lastEventPointer.timeStamp;
@@ -288,10 +310,10 @@ function isEventPointerDouble(
 }
 
 function isEventPointerLong(
-  isDown: boolean,
+  isStart: boolean,
   ev: MouseEvent | TouchEvent
 ): boolean {
-  if (!isDown || lastEventPointer == null || ev == null) {
+  if (!isStart || lastEventPointer == null || ev == null) {
     return false;
   }
   const timeDif = ev.timeStamp - lastEventPointer.timeStamp;
