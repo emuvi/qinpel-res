@@ -411,8 +411,8 @@ function addAction(element: HTMLElement, action: QinAction) {
   element.addEventListener("keyup", actKeyUp);
   element.addEventListener("mousedown", actMouseDown);
   element.addEventListener("mouseup", actMouseUp);
-  element.addEventListener("touchstart", actTouchDown);
-  element.addEventListener("touchend", actTouchUp);
+  element.addEventListener("touchstart", actTouchStart);
+  element.addEventListener("touchend", actTouchEnd);
 
   function actKeyDown(ev: KeyboardEvent) {
     let qinEvent = new QinEvent(true, ev);
@@ -454,7 +454,7 @@ function addAction(element: HTMLElement, action: QinAction) {
     }
   }
 
-  function actTouchDown(ev: TouchEvent) {
+  function actTouchStart(ev: TouchEvent) {
     let qinEvent = new QinEvent(true, ev);
     action(qinEvent);
     if (qinEvent.stop) {
@@ -464,7 +464,7 @@ function addAction(element: HTMLElement, action: QinAction) {
     }
   }
 
-  function actTouchUp(ev: TouchEvent) {
+  function actTouchEnd(ev: TouchEvent) {
     let qinEvent = new QinEvent(false, ev);
     action(qinEvent);
     if (qinEvent.stop) {
