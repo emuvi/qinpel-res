@@ -11,7 +11,7 @@ export { QinEvent } from './qin-arm';
 export { QinAction } from './qin-arm';
 export { QinWaiter } from './qin-arm';
 export { QinWaiters } from './qin-arm';
-export { QinDragCalls } from './qin-arm';
+export { QinPointerCalls } from './qin-arm';
 export { QinArm } from './qin-arm';
 export { QinFilesNature } from './qin-foot';
 export { QinFilesOperation } from './qin-foot';

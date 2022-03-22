@@ -133,48 +133,48 @@ export class QinEvent {
 
   public get isFirstButton(): boolean {
     if (this._event instanceof MouseEvent) {
-      return this._event.button == 0;
+      return isFirstButton(this._event);
     }
     return false;
   }
 
   public get isMiddleButton(): boolean {
     if (this._event instanceof MouseEvent) {
-      return this._event.button == 1;
+      return isMiddleButton(this._event);
     }
     return false;
   }
 
   public get isSecondButton(): boolean {
     if (this._event instanceof MouseEvent) {
-      return this._event.button == 2;
+      return isSecondButton(this._event);
     }
     return false;
   }
 
   public get isOneFinger(): boolean {
     if (this._event instanceof TouchEvent) {
-      return this._event.touches.length == 1;
+      return isOneFinger(this._event);
     }
     return false;
   }
   public get isTwoFingers(): boolean {
     if (this._event instanceof TouchEvent) {
-      return this._event.touches.length == 2;
+      return isTwoFingers(this._event);
     }
     return false;
   }
 
   public get isThreeFingers(): boolean {
     if (this._event instanceof TouchEvent) {
-      return this._event.touches.length == 3;
+      return isThreeFingers(this._event);
     }
     return false;
   }
 
   public get isFourFingers(): boolean {
     if (this._event instanceof TouchEvent) {
-      return this._event.touches.length == 4;
+      return isFourFingers(this._event);
     }
     return false;
   }
@@ -183,10 +183,10 @@ export class QinEvent {
     if (this._start) {
       return false;
     }
-    if (this.fromTyping) {
-      return this.isEnter || this.isSpace;
-    } else if (this.fromPointing) {
-      return this.isFirstButton || this.isOneFinger;
+    if (this._event instanceof KeyboardEvent) {
+      return isPrimaryKey(this._event);
+    } else if (this._event instanceof MouseEvent || this._event instanceof TouchEvent) {
+      return isPrimaryPoint(this._event);
     }
     return false;
   }
@@ -195,10 +195,10 @@ export class QinEvent {
     if (this._start) {
       return false;
     }
-    if (this.fromTyping) {
-      return this.hasCtrl && this.hasAlt && this.isSpace;
-    } else if (this.fromPointing) {
-      return this.isMiddleButton || this.isThreeFingers;
+    if (this._event instanceof KeyboardEvent) {
+      return isAuxiliaryKey(this._event);
+    } else if (this._event instanceof MouseEvent || this._event instanceof TouchEvent) {
+      return isAuxiliaryPoint(this._event);
     }
     return false;
   }
@@ -207,10 +207,10 @@ export class QinEvent {
     if (this._start) {
       return false;
     }
-    if (this.fromTyping) {
-      return this.hasCtrl && !this.hasAlt && this.isSpace;
-    } else if (this.fromPointing) {
-      return this.isSecondButton || this.isTwoFingers;
+    if (this._event instanceof KeyboardEvent) {
+      return isSecondaryKey(this._event);
+    } else if (this._event instanceof MouseEvent || this._event instanceof TouchEvent) {
+      return isSecondaryPoint(this._event);
     }
     return false;
   }
@@ -251,12 +251,14 @@ export class QinWaiters {
   }
 }
 
-export class QinDragCalls {
-  onDouble?: CallableFunction;
-  onLong?: CallableFunction;
-  onStart?: CallableFunction;
-  onMove?: CallableFunction;
-  onEnd?: CallableFunction;
+type QinPointerCaller = (event?: MouseEvent | TouchEvent) => void | boolean;
+
+export class QinPointerCalls {
+  onDouble?: QinPointerCaller;
+  onLong?: QinPointerCaller;
+  onStart?: QinPointerCaller;
+  onMove?: QinPointerCaller;
+  onEnd?: QinPointerCaller;
 }
 
 function stopEvent(event: any) {
@@ -335,6 +337,73 @@ function isKeyEscape(ev: KeyboardEvent): boolean {
 
 function isKeySpace(ev: KeyboardEvent): boolean {
   return isKeyInList(ev, [" ", "space", "spacebar"]) || ev.keyCode === 32;
+}
+
+function isFirstButton(ev: MouseEvent): boolean {
+  return ev?.button == 0;
+}
+
+function isMiddleButton(ev: MouseEvent): boolean {
+  return ev?.button == 1;
+}
+
+function isSecondButton(ev: MouseEvent): boolean {
+  return ev?.button == 2;
+}
+
+function isOneFinger(ev: TouchEvent): boolean {
+    return ev?.touches.length == 1;
+}
+
+function isTwoFingers(ev: TouchEvent): boolean {
+    return ev?.touches.length == 2;
+}
+
+function isThreeFingers(ev: TouchEvent): boolean {
+    return ev?.touches.length == 3;
+}
+
+function isFourFingers(ev: TouchEvent): boolean {
+    return ev?.touches.length == 4;
+}
+
+function isPrimaryKey(ev: KeyboardEvent): boolean {
+  return isKeyEnter(ev);
+}
+
+function isAuxiliaryKey(ev: KeyboardEvent): boolean {
+  return ev.ctrlKey && ev.altKey && isKeySpace(ev);
+}
+
+function isSecondaryKey(ev: KeyboardEvent): boolean {
+  return ev.ctrlKey && !ev.altKey && isKeySpace(ev);
+}
+
+function isPrimaryPoint(ev: MouseEvent | TouchEvent): boolean {
+  if (ev instanceof MouseEvent) {
+    return isFirstButton(ev);
+  } else if (ev instanceof TouchEvent) {
+    return isOneFinger(ev);
+  }
+  return false;
+}
+
+function isAuxiliaryPoint(ev: MouseEvent | TouchEvent): boolean {
+  if (ev instanceof MouseEvent) {
+    return isMiddleButton(ev);
+  } else if (ev instanceof TouchEvent) {
+    return isThreeFingers(ev);
+  }
+  return false;
+}
+
+function isSecondaryPoint(ev: MouseEvent | TouchEvent): boolean {
+  if (ev instanceof MouseEvent) {
+    return isSecondButton(ev);
+  } else if (ev instanceof TouchEvent) {
+    return isTwoFingers(ev);
+  }
+  return false;
 }
 
 function addAction(element: HTMLElement, action: QinAction) {
@@ -462,7 +531,7 @@ function putActionProxy(destiny: HTMLElement, origins: HTMLInputElement[]) {
 function addMover(
   sources: HTMLElement[],
   target: HTMLElement,
-  dragCalls?: QinDragCalls
+  dragCalls?: QinPointerCalls
 ) {
   var dragInitEventX = 0;
   var dragInitEventY = 0;
@@ -534,7 +603,7 @@ function addMover(
 function addResizer(
   sources: HTMLElement[],
   target: HTMLElement,
-  dragCalls?: QinDragCalls
+  dragCalls?: QinPointerCalls
 ) {
   var dragInitEventX = 0;
   var dragInitEventY = 0;
@@ -605,7 +674,7 @@ function addResizer(
   }
 }
 
-function addScroller(target: HTMLElement, dragCalls?: QinDragCalls) {
+function addScroller(target: HTMLElement, dragCalls?: QinPointerCalls) {
   var dragInitX = 0;
   var dragInitY = 0;
   var dragScrollX = 0;
@@ -678,6 +747,16 @@ export const QinArm = {
   isKeyInList,
   isKeyEnter,
   isKeySpace,
+  isFirstButton,
+  isMiddleButton,
+  isSecondButton,
+  isOneFinger,
+  isTwoFingers,
+  isThreeFingers,
+  isFourFingers,
+  isPrimaryPoint,
+  isAuxiliaryPoint,
+  isSecondaryPoint,
   addAction,
   addActionMain,
   putActionProxy,
