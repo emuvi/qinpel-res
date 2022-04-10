@@ -34,6 +34,22 @@ function setCookie(name: string, value: any, options: any = {}) {
   document.cookie = updatedCookie;
 }
 
+function delCookie(name: string, options: any = {}) {
+  let updatedCookie =
+    encodeURIComponent(name) + "=;  expires=Thu, 01 Jan 1970 00:00:00 GMT";
+  if (options.expires) {
+    delete options.expires;
+  }
+  for (let optionKey in options) {
+    updatedCookie += "; " + optionKey;
+    let optionValue = options[optionKey];
+    if (optionValue !== true) {
+      updatedCookie += "=" + optionValue;
+    }
+  }
+  document.cookie = updatedCookie;
+}
+
 function getTextLines(fromText: string): string[] {
   return fromText.match(/[^\r\n]+/g);
 }
@@ -152,6 +168,7 @@ function parseParameters(source: string): string[] {
 export const QinBody = {
   getCookie,
   setCookie,
+  delCookie,
   getTextLines,
   getCSVRows,
   maskSpecialChars,

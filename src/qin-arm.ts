@@ -185,7 +185,10 @@ export class QinEvent {
     }
     if (this._event instanceof KeyboardEvent) {
       return isPrimaryKey(this._event);
-    } else if (this._event instanceof MouseEvent || this._event instanceof TouchEvent) {
+    } else if (
+      this._event instanceof MouseEvent ||
+      this._event instanceof TouchEvent
+    ) {
       return isPrimaryPoint(this._event);
     }
     return false;
@@ -197,7 +200,10 @@ export class QinEvent {
     }
     if (this._event instanceof KeyboardEvent) {
       return isAuxiliaryKey(this._event);
-    } else if (this._event instanceof MouseEvent || this._event instanceof TouchEvent) {
+    } else if (
+      this._event instanceof MouseEvent ||
+      this._event instanceof TouchEvent
+    ) {
       return isAuxiliaryPoint(this._event);
     }
     return false;
@@ -209,7 +215,10 @@ export class QinEvent {
     }
     if (this._event instanceof KeyboardEvent) {
       return isSecondaryKey(this._event);
-    } else if (this._event instanceof MouseEvent || this._event instanceof TouchEvent) {
+    } else if (
+      this._event instanceof MouseEvent ||
+      this._event instanceof TouchEvent
+    ) {
       return isSecondaryPoint(this._event);
     }
     return false;
@@ -352,19 +361,19 @@ function isSecondButton(ev: MouseEvent): boolean {
 }
 
 function isOneFinger(ev: TouchEvent): boolean {
-    return ev?.touches.length == 1;
+  return ev?.touches.length == 1;
 }
 
 function isTwoFingers(ev: TouchEvent): boolean {
-    return ev?.touches.length == 2;
+  return ev?.touches.length == 2;
 }
 
 function isThreeFingers(ev: TouchEvent): boolean {
-    return ev?.touches.length == 3;
+  return ev?.touches.length == 3;
 }
 
 function isFourFingers(ev: TouchEvent): boolean {
-    return ev?.touches.length == 4;
+  return ev?.touches.length == 4;
 }
 
 function isPrimaryKey(ev: KeyboardEvent): boolean {
@@ -507,23 +516,24 @@ function addActionMain(element: HTMLElement, action: QinAction) {
 
 function putActionProxy(destiny: HTMLElement, origins: HTMLInputElement[]) {
   for (const origin of origins) {
+    // [ TODO ] this does no works!
     origin.addEventListener("keydown", (e) => {
-      destiny.onkeydown(e);
+      destiny.dispatchEvent(e);
     });
     origin.addEventListener("keyup", (e) => {
-      destiny.onkeyup(e);
+      destiny.dispatchEvent(e);
     });
     origin.addEventListener("mousedown", (e) => {
-      destiny.onmousedown(e);
+      destiny.dispatchEvent(e);
     });
     origin.addEventListener("mouseup", (e) => {
-      destiny.onmouseup(e);
+      destiny.dispatchEvent(e);
     });
     origin.addEventListener("touchstart", (e) => {
-      destiny.ontouchstart(e);
+      destiny.dispatchEvent(e);
     });
     origin.addEventListener("touchend", (e) => {
-      destiny.ontouchend(e);
+      destiny.dispatchEvent(e);
     });
   }
 }
