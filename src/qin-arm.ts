@@ -514,6 +514,12 @@ function addActionMain(element: HTMLElement, action: QinAction) {
   }
 }
 
+function addActions(elements: HTMLElement[], action: QinAction) {
+  for (const element of elements) {
+    addAction(element, action);
+  }
+}
+
 function putActionProxy(destiny: HTMLElement, origins: HTMLInputElement[]) {
   for (const origin of origins) {
     // [ TODO ] this does no works!
@@ -769,6 +775,7 @@ export const QinArm = {
   isSecondaryPoint,
   addAction,
   addActionMain,
+  addActions,
   putActionProxy,
   addMover,
   addResizer,

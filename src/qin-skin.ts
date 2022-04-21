@@ -2,10 +2,12 @@ import { QinArm } from "./qin-arm";
 import { QinDimension, QinGrandeur } from "./qin-head"
 
 export const QinStyles = {
-    ColorForeground: "#270036",
+    ColorForeground: "#180027",
     ColorBackground: "#fffaef",
     ColorInactive: "#faefff",
-    ColorActive: "#facdcd",
+    ColorActive: "#fadede",
+    ColorAccent: "#ae0000",
+    ColorSelected: "#5d72de8f",
     FontName: "SourceSansPro",
     FontSize: "16px",
 };
@@ -24,21 +26,21 @@ function styleAsEdit(el: HTMLElement) {
     el.style.margin = "1px";
     el.style.padding = "3px";
     el.style.outline = "none";
-    el.style.border = "1px solid #180027";
+    el.style.border = "1px solid " + QinStyles.ColorForeground;
     el.style.borderRadius = "3px";
-    el.style.color = "#180027";
-    el.style.backgroundColor = "#ffffff";
+    el.style.color = QinStyles.ColorForeground;
+    el.style.backgroundColor = QinStyles.ColorInactive;
     el.style.fontFamily = "SourceSansPro";
     el.style.fontSize = "16px";
     el.addEventListener("focus", () => {
         el.style.outline = "none";
-        el.style.backgroundColor = "#faefff";
-        el.style.border = "1px solid #ae0000";
+        el.style.backgroundColor = QinStyles.ColorActive;
+        el.style.border = "1px solid " + QinStyles.ColorAccent;
     });
     el.addEventListener("focusout", () => {
         el.style.outline = "none";
-        el.style.backgroundColor = "#ffffff";
-        el.style.border = "1px solid #180027";
+        el.style.backgroundColor = QinStyles.ColorInactive;
+        el.style.border = "1px solid " + QinStyles.ColorForeground;
     });
 }
 
@@ -163,6 +165,13 @@ function isElementVisibleInScroll(element: HTMLElement) {
     return true;
 }
 
+function getDimension(el: HTMLElement): QinDimension {
+    return {
+        width: parseInt(el.style.width),
+        height: parseInt(el.style.height),
+    };
+}
+
 function getDimensionSize(size: QinGrandeur): QinDimension {
     if (size == QinGrandeur.LARGE) {
         return getDimensionLarge();
@@ -214,6 +223,7 @@ export const QinSkin = {
     disableSelection,
     clearSelection,
     isElementVisibleInScroll,
+    getDimension,
     getDimensionSize,
     getDimensionSmall,
     getDimensionMedium,
