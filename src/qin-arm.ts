@@ -178,32 +178,32 @@ export class QinEvent {
     return false;
   }
 
-  public get isPrimary(): boolean {
+  public get isMain(): boolean {
     if (this._start) {
       return false;
     }
     if (window.KeyboardEvent && this._event instanceof KeyboardEvent) {
-      return isPrimaryKey(this._event);
+      return isMainKey(this._event);
     } else if (
       (window.MouseEvent && this._event instanceof MouseEvent) ||
       (window.TouchEvent && this._event instanceof TouchEvent)
     ) {
-      return isPrimaryPoint(this._event);
+      return isMainPoint(this._event);
     }
     return false;
   }
 
-  public get isPrimaryKey(): boolean {
+  public get isMainKey(): boolean {
     if (this._start) {
       return false;
     }
     if (window.KeyboardEvent && this._event instanceof KeyboardEvent) {
-      return isPrimaryKey(this._event);
+      return isMainKey(this._event);
     }
     return false;
   }
   
-  public get isPrimaryPoint(): boolean {
+  public get isMainPoint(): boolean {
     if (this._start) {
       return false;
     }
@@ -211,7 +211,7 @@ export class QinEvent {
       (window.MouseEvent && this._event instanceof MouseEvent) ||
       (window.TouchEvent && this._event instanceof TouchEvent)
     ) {
-      return isPrimaryPoint(this._event);
+      return isMainPoint(this._event);
     }
     return false;
   }
@@ -459,7 +459,7 @@ function isFourFingers(ev: TouchEvent): boolean {
   return ev?.touches.length == 4;
 }
 
-function isPrimaryKey(ev: KeyboardEvent): boolean {
+function isMainKey(ev: KeyboardEvent): boolean {
   return isKeyEnter(ev);
 }
 
@@ -471,7 +471,7 @@ function isSecondaryKey(ev: KeyboardEvent): boolean {
   return ev.ctrlKey && !ev.altKey && isKeySpace(ev);
 }
 
-function isPrimaryPoint(ev: MouseEvent | TouchEvent): boolean {
+function isMainPoint(ev: MouseEvent | TouchEvent): boolean {
   if (window.MouseEvent && ev instanceof MouseEvent) {
     return isFirstButton(ev);
   } else if (window.TouchEvent && ev instanceof TouchEvent) {
@@ -567,25 +567,25 @@ function addAction(origin: HTMLElement, action: QinAction) {
   }
 }
 
-function addActionPrimary(origin: HTMLElement, action: QinAction) {
+function addActionMain(origin: HTMLElement, action: QinAction) {
   addAction(origin, (qinEvent: QinEvent) => {
-    if (qinEvent.isPrimary) {
+    if (qinEvent.isMain) {
       action(qinEvent);
     }
   });
 }
 
-function addActionPrimaryKey(origin: HTMLElement, action: QinAction) {
+function addActionMainKey(origin: HTMLElement, action: QinAction) {
   addAction(origin, (qinEvent: QinEvent) => {
-    if (qinEvent.isPrimaryKey) {
+    if (qinEvent.isMainKey) {
       action(qinEvent);
     }
   });
 }
 
-function addActionPrimaryPoint(origin: HTMLElement, action: QinAction) {
+function addActionMainPoint(origin: HTMLElement, action: QinAction) {
   addAction(origin, (qinEvent: QinEvent) => {
-    if (qinEvent.isPrimaryPoint) {
+    if (qinEvent.isMainPoint) {
       action(qinEvent);
     }
   });
@@ -597,21 +597,21 @@ function addActions(origins: HTMLElement[], action: QinAction) {
   }
 }
 
-function addActionsPrimary(origins: HTMLElement[], action: QinAction) {
+function addActionsMain(origins: HTMLElement[], action: QinAction) {
   for (const element of origins) {
-    addActionPrimary(element, action);
+    addActionMain(element, action);
   }
 }
 
-function addActionsPrimaryKey(origins: HTMLElement[], action: QinAction) {
+function addActionsMainKey(origins: HTMLElement[], action: QinAction) {
   for (const element of origins) {
-    addActionPrimary(element, action);
+    addActionMain(element, action);
   }
 }
 
-function addActionsPrimaryPoint(origins: HTMLElement[], action: QinAction) {
+function addActionsMainPoint(origins: HTMLElement[], action: QinAction) {
   for (const element of origins) {
-    addActionPrimary(element, action);
+    addActionMain(element, action);
   }
 }
 
@@ -841,17 +841,17 @@ export const QinArm = {
   isTwoFingers,
   isThreeFingers,
   isFourFingers,
-  isPrimaryPoint,
+  isMainPoint,
   isAuxiliaryPoint,
   isSecondaryPoint,
   addAction,
-  addActionPrimary,
-  addActionPrimaryKey,
-  addActionPrimaryPoint,
+  addActionMain,
+  addActionMainKey,
+  addActionMainPoint,
   addActions,
-  addActionsPrimary,
-  addActionsPrimaryKey,
-  addActionsPrimaryPoint,
+  addActionsMain,
+  addActionsMainKey,
+  addActionsMainPoint,
   addMover,
   addResizer,
   addScroller,
