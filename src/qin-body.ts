@@ -22,6 +22,7 @@ function setCookie(name: string, value: any, options: any = {}) {
   if (options.expires instanceof Date) {
     options.expires = options.expires.toUTCString();
   }
+  options["SameSite"] = "Strict";
   let updatedCookie =
     encodeURIComponent(name) + "=" + encodeURIComponent(value);
   for (let optionKey in options) {
@@ -31,6 +32,7 @@ function setCookie(name: string, value: any, options: any = {}) {
       updatedCookie += "=" + optionValue;
     }
   }
+  updatedCookie += "; Secure";
   document.cookie = updatedCookie;
 }
 

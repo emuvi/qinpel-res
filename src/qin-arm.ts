@@ -2,20 +2,17 @@ import { QinPoint } from "./qin-head";
 import { QinSkin } from "./qin-skin";
 
 export class QinEvent {
+  private _origin: HTMLElement;
   private _start: boolean;
   private _event: KeyboardEvent | MouseEvent | TouchEvent = null;
   private _point: QinPoint = null;
   private _stop: boolean = false;
 
-  public constructor(
-    isStart: boolean,
-    event: KeyboardEvent | MouseEvent | TouchEvent
-  ) {
+  public constructor(origin: HTMLElement, isStart: boolean, event: KeyboardEvent | MouseEvent | TouchEvent) {
+    this._origin = origin;
     this._start = isStart;
     this._event = event;
-    if (event instanceof MouseEvent || event instanceof TouchEvent) {
-      this._point = makeEventPointer(isStart, event);
-    }
+    this._point = makeEventPointer(isStart, getEventPoint(event));
   }
 
   public get isStart(): boolean {
@@ -23,6 +20,10 @@ export class QinEvent {
   }
 
   public get fromOrigin(): any {
+    return this._origin;
+  }
+
+  public get fromTarget(): any {
     if (this._event) {
       return this._event.target;
     }
@@ -34,9 +35,10 @@ export class QinEvent {
   }
 
   public get fromPointing(): boolean {
-    return (
-      this._event instanceof MouseEvent || this._event instanceof TouchEvent
-    );
+    if (getEventPoint(this._event)) {
+      return true;
+    }
+    return false;
   }
 
   public get hasAlt(): boolean {
@@ -84,21 +86,17 @@ export class QinEvent {
   }
 
   public get isDouble(): boolean {
-    if (
-      this._event instanceof MouseEvent ||
-      this._event instanceof TouchEvent
-    ) {
-      return isEventPointerDouble(this._start, this._event);
+    let event = getEventPoint(this._event);
+    if (event) {
+      return isEventPointerDouble(this._start, event);
     }
     return false;
   }
 
   public get isLong(): boolean {
-    if (
-      this._event instanceof MouseEvent ||
-      this._event instanceof TouchEvent
-    ) {
-      return isEventPointerLong(this._start, this._event);
+    let event = getEventPoint(this._event);
+    if (event) {
+      return isEventPointerLong(this._start, event);
     }
     return false;
   }
@@ -108,9 +106,9 @@ export class QinEvent {
   }
 
   public get pointX(): number {
-    if (this._event instanceof MouseEvent) {
+    if (window.MouseEvent && this._event instanceof MouseEvent) {
       return this._event.clientX;
-    } else if (this._event instanceof TouchEvent) {
+    } else if (window.TouchEvent && this._event instanceof TouchEvent) {
       if (this._event.touches.length > 0) {
         let index = (this._event.touches.length / 2) | 0;
         return this._event.touches[index].clientX;
@@ -120,9 +118,9 @@ export class QinEvent {
   }
 
   public get pointY(): number {
-    if (this._event instanceof MouseEvent) {
+    if (window.MouseEvent && this._event instanceof MouseEvent) {
       return this._event.clientY;
-    } else if (this._event instanceof TouchEvent) {
+    } else if (window.TouchEvent && this._event instanceof TouchEvent) {
       if (this._event.touches.length > 0) {
         let index = (this._event.touches.length / 2) | 0;
         return this._event.touches[index].clientY;
@@ -132,48 +130,49 @@ export class QinEvent {
   }
 
   public get isFirstButton(): boolean {
-    if (this._event instanceof MouseEvent) {
+    if (window.MouseEvent && this._event instanceof MouseEvent) {
       return isFirstButton(this._event);
     }
     return false;
   }
 
   public get isMiddleButton(): boolean {
-    if (this._event instanceof MouseEvent) {
+    if (window.MouseEvent && this._event instanceof MouseEvent) {
       return isMiddleButton(this._event);
     }
     return false;
   }
 
   public get isSecondButton(): boolean {
-    if (this._event instanceof MouseEvent) {
+    if (window.MouseEvent && this._event instanceof MouseEvent) {
       return isSecondButton(this._event);
     }
     return false;
   }
 
   public get isOneFinger(): boolean {
-    if (this._event instanceof TouchEvent) {
+    if (window.TouchEvent && this._event instanceof TouchEvent) {
       return isOneFinger(this._event);
     }
     return false;
   }
+
   public get isTwoFingers(): boolean {
-    if (this._event instanceof TouchEvent) {
+    if (window.TouchEvent && this._event instanceof TouchEvent) {
       return isTwoFingers(this._event);
     }
     return false;
   }
 
   public get isThreeFingers(): boolean {
-    if (this._event instanceof TouchEvent) {
+    if (window.TouchEvent && this._event instanceof TouchEvent) {
       return isThreeFingers(this._event);
     }
     return false;
   }
 
   public get isFourFingers(): boolean {
-    if (this._event instanceof TouchEvent) {
+    if (window.TouchEvent && this._event instanceof TouchEvent) {
       return isFourFingers(this._event);
     }
     return false;
@@ -183,11 +182,34 @@ export class QinEvent {
     if (this._start) {
       return false;
     }
-    if (this._event instanceof KeyboardEvent) {
+    if (window.KeyboardEvent && this._event instanceof KeyboardEvent) {
       return isPrimaryKey(this._event);
     } else if (
-      this._event instanceof MouseEvent ||
-      this._event instanceof TouchEvent
+      (window.MouseEvent && this._event instanceof MouseEvent) ||
+      (window.TouchEvent && this._event instanceof TouchEvent)
+    ) {
+      return isPrimaryPoint(this._event);
+    }
+    return false;
+  }
+
+  public get isPrimaryKey(): boolean {
+    if (this._start) {
+      return false;
+    }
+    if (window.KeyboardEvent && this._event instanceof KeyboardEvent) {
+      return isPrimaryKey(this._event);
+    }
+    return false;
+  }
+  
+  public get isPrimaryPoint(): boolean {
+    if (this._start) {
+      return false;
+    }
+    if (
+      (window.MouseEvent && this._event instanceof MouseEvent) ||
+      (window.TouchEvent && this._event instanceof TouchEvent)
     ) {
       return isPrimaryPoint(this._event);
     }
@@ -198,11 +220,36 @@ export class QinEvent {
     if (this._start) {
       return false;
     }
-    if (this._event instanceof KeyboardEvent) {
+    if (window.KeyboardEvent && this._event instanceof KeyboardEvent) {
       return isAuxiliaryKey(this._event);
     } else if (
-      this._event instanceof MouseEvent ||
-      this._event instanceof TouchEvent
+      (window.MouseEvent && this._event instanceof MouseEvent) ||
+      (window.TouchEvent && this._event instanceof TouchEvent)
+    ) {
+      return isAuxiliaryPoint(this._event);
+    }
+    return false;
+  }
+
+  public get isAuxiliaryKey(): boolean {
+    if (this._start) {
+      return false;
+    }
+    if (window.KeyboardEvent && this._event instanceof KeyboardEvent) {
+      return isAuxiliaryKey(this._event);
+    }
+    return false;
+  }
+
+  
+
+  public get isAuxiliaryPoint(): boolean {
+    if (this._start) {
+      return false;
+    }
+    if (
+      (window.MouseEvent && this._event instanceof MouseEvent) ||
+      (window.TouchEvent && this._event instanceof TouchEvent)
     ) {
       return isAuxiliaryPoint(this._event);
     }
@@ -213,11 +260,34 @@ export class QinEvent {
     if (this._start) {
       return false;
     }
-    if (this._event instanceof KeyboardEvent) {
+    if (window.KeyboardEvent && this._event instanceof KeyboardEvent) {
       return isSecondaryKey(this._event);
     } else if (
-      this._event instanceof MouseEvent ||
-      this._event instanceof TouchEvent
+      (window.MouseEvent && this._event instanceof MouseEvent) ||
+      (window.TouchEvent && this._event instanceof TouchEvent)
+    ) {
+      return isSecondaryPoint(this._event);
+    }
+    return false;
+  }
+
+  public get isSecondaryKey(): boolean {
+    if (this._start) {
+      return false;
+    }
+    if (window.KeyboardEvent && this._event instanceof KeyboardEvent) {
+      return isSecondaryKey(this._event);
+    }
+    return false;
+  }
+
+  public get isSecondaryPoint(): boolean {
+    if (this._start) {
+      return false;
+    }
+    if (
+      (window.MouseEvent && this._event instanceof MouseEvent) ||
+      (window.TouchEvent && this._event instanceof TouchEvent)
     ) {
       return isSecondaryPoint(this._event);
     }
@@ -281,22 +351,41 @@ function stopEvent(event: any) {
   return false;
 }
 
+function getEventKey(ev: KeyboardEvent | MouseEvent | TouchEvent): KeyboardEvent {
+  if (window.KeyboardEvent && ev instanceof KeyboardEvent) {
+    return ev;
+  }
+  return null;
+}
+
+function getEventPoint(
+  ev: KeyboardEvent | MouseEvent | TouchEvent
+): MouseEvent | TouchEvent {
+  if (window.MouseEvent && ev instanceof MouseEvent) {
+    return ev;
+  }
+  if (window.TouchEvent && ev instanceof TouchEvent) {
+    return ev;
+  }
+  return null;
+}
+
 var lastEventPointer: MouseEvent | TouchEvent = null;
 
-function makeEventPointer(
-  isStart: boolean,
-  ev: MouseEvent | TouchEvent
-): QinPoint {
+function makeEventPointer(isStart: boolean, ev: MouseEvent | TouchEvent): QinPoint {
+  if (!ev) {
+    return null;
+  }
   const result = {
     posX: 0,
     posY: 0,
   };
-  if (ev instanceof MouseEvent) {
+  if (window.MouseEvent && ev instanceof MouseEvent) {
     if (ev.clientX || ev.clientY) {
       result.posX = ev.clientX;
       result.posY = ev.clientY;
     }
-  } else if (ev instanceof TouchEvent) {
+  } else if (window.TouchEvent && ev instanceof TouchEvent) {
     if (ev.touches && this._event.touches.length > 1) {
       let index = Math.floor(this._event.touches.length / 2);
       result.posX = ev.touches[index].clientX;
@@ -309,10 +398,7 @@ function makeEventPointer(
   return result;
 }
 
-function isEventPointerDouble(
-  isStart: boolean,
-  ev: MouseEvent | TouchEvent
-): boolean {
+function isEventPointerDouble(isStart: boolean, ev: MouseEvent | TouchEvent): boolean {
   if (!isStart || lastEventPointer == null || ev == null) {
     return false;
   }
@@ -320,10 +406,7 @@ function isEventPointerDouble(
   return timeDif < 450;
 }
 
-function isEventPointerLong(
-  isStart: boolean,
-  ev: MouseEvent | TouchEvent
-): boolean {
+function isEventPointerLong(isStart: boolean, ev: MouseEvent | TouchEvent): boolean {
   if (!isStart || lastEventPointer == null || ev == null) {
     return false;
   }
@@ -389,42 +472,42 @@ function isSecondaryKey(ev: KeyboardEvent): boolean {
 }
 
 function isPrimaryPoint(ev: MouseEvent | TouchEvent): boolean {
-  if (ev instanceof MouseEvent) {
+  if (window.MouseEvent && ev instanceof MouseEvent) {
     return isFirstButton(ev);
-  } else if (ev instanceof TouchEvent) {
+  } else if (window.TouchEvent && ev instanceof TouchEvent) {
     return isOneFinger(ev);
   }
   return false;
 }
 
 function isAuxiliaryPoint(ev: MouseEvent | TouchEvent): boolean {
-  if (ev instanceof MouseEvent) {
+  if (window.MouseEvent && ev instanceof MouseEvent) {
     return isMiddleButton(ev);
-  } else if (ev instanceof TouchEvent) {
+  } else if (window.TouchEvent && ev instanceof TouchEvent) {
     return isThreeFingers(ev);
   }
   return false;
 }
 
 function isSecondaryPoint(ev: MouseEvent | TouchEvent): boolean {
-  if (ev instanceof MouseEvent) {
+  if (window.MouseEvent && ev instanceof MouseEvent) {
     return isSecondButton(ev);
-  } else if (ev instanceof TouchEvent) {
+  } else if (window.TouchEvent && ev instanceof TouchEvent) {
     return isTwoFingers(ev);
   }
   return false;
 }
 
-function addAction(element: HTMLElement, action: QinAction) {
-  element.addEventListener("keydown", actKeyDown);
-  element.addEventListener("keyup", actKeyUp);
-  element.addEventListener("mousedown", actMouseDown);
-  element.addEventListener("mouseup", actMouseUp);
-  element.addEventListener("touchstart", actTouchStart);
-  element.addEventListener("touchend", actTouchEnd);
+function addAction(origin: HTMLElement, action: QinAction) {
+  origin.addEventListener("keydown", actKeyDown);
+  origin.addEventListener("keyup", actKeyUp);
+  origin.addEventListener("mousedown", actMouseDown);
+  origin.addEventListener("mouseup", actMouseUp);
+  origin.addEventListener("touchstart", actTouchStart);
+  origin.addEventListener("touchend", actTouchEnd);
 
   function actKeyDown(ev: KeyboardEvent) {
-    let qinEvent = new QinEvent(true, ev);
+    let qinEvent = new QinEvent(origin, true, ev);
     action(qinEvent);
     if (qinEvent.stop) {
       return stopEvent(ev);
@@ -434,7 +517,7 @@ function addAction(element: HTMLElement, action: QinAction) {
   }
 
   function actKeyUp(ev: KeyboardEvent) {
-    let qinEvent = new QinEvent(false, ev);
+    let qinEvent = new QinEvent(origin, false, ev);
     action(qinEvent);
     if (qinEvent.stop) {
       return stopEvent(ev);
@@ -444,7 +527,7 @@ function addAction(element: HTMLElement, action: QinAction) {
   }
 
   function actMouseDown(ev: MouseEvent) {
-    let qinEvent = new QinEvent(true, ev);
+    let qinEvent = new QinEvent(origin, true, ev);
     action(qinEvent);
     if (qinEvent.stop) {
       return stopEvent(ev);
@@ -454,7 +537,7 @@ function addAction(element: HTMLElement, action: QinAction) {
   }
 
   function actMouseUp(ev: MouseEvent) {
-    let qinEvent = new QinEvent(false, ev);
+    let qinEvent = new QinEvent(origin, false, ev);
     action(qinEvent);
     if (qinEvent.stop) {
       return stopEvent(ev);
@@ -464,7 +547,7 @@ function addAction(element: HTMLElement, action: QinAction) {
   }
 
   function actTouchStart(ev: TouchEvent) {
-    let qinEvent = new QinEvent(true, ev);
+    let qinEvent = new QinEvent(origin, true, ev);
     action(qinEvent);
     if (qinEvent.stop) {
       return stopEvent(ev);
@@ -474,7 +557,7 @@ function addAction(element: HTMLElement, action: QinAction) {
   }
 
   function actTouchEnd(ev: TouchEvent) {
-    let qinEvent = new QinEvent(false, ev);
+    let qinEvent = new QinEvent(origin, false, ev);
     action(qinEvent);
     if (qinEvent.stop) {
       return stopEvent(ev);
@@ -484,63 +567,51 @@ function addAction(element: HTMLElement, action: QinAction) {
   }
 }
 
-function addActionMain(element: HTMLElement, action: QinAction) {
-  element.onkeyup = actKeyUp;
-  element.onmouseup = actMouseUp;
-  element.ontouchend = actTouchEnd;
-
-  function actKeyUp(ev: KeyboardEvent) {
-    let qinEvent = new QinEvent(false, ev);
+function addActionPrimary(origin: HTMLElement, action: QinAction) {
+  addAction(origin, (qinEvent: QinEvent) => {
     if (qinEvent.isPrimary) {
       action(qinEvent);
-      return stopEvent(ev);
     }
-  }
-
-  function actMouseUp(ev: MouseEvent) {
-    let qinEvent = new QinEvent(false, ev);
-    if (qinEvent.isPrimary) {
-      action(qinEvent);
-      return stopEvent(ev);
-    }
-  }
-
-  function actTouchEnd(ev: TouchEvent) {
-    let qinEvent = new QinEvent(false, ev);
-    if (qinEvent.isPrimary) {
-      action(qinEvent);
-      return stopEvent(ev);
-    }
-  }
+  });
 }
 
-function addActions(elements: HTMLElement[], action: QinAction) {
-  for (const element of elements) {
+function addActionPrimaryKey(origin: HTMLElement, action: QinAction) {
+  addAction(origin, (qinEvent: QinEvent) => {
+    if (qinEvent.isPrimaryKey) {
+      action(qinEvent);
+    }
+  });
+}
+
+function addActionPrimaryPoint(origin: HTMLElement, action: QinAction) {
+  addAction(origin, (qinEvent: QinEvent) => {
+    if (qinEvent.isPrimaryPoint) {
+      action(qinEvent);
+    }
+  });
+}
+
+function addActions(origins: HTMLElement[], action: QinAction) {
+  for (const element of origins) {
     addAction(element, action);
   }
 }
 
-function putActionProxy(destiny: HTMLElement, origins: HTMLInputElement[]) {
-  for (const origin of origins) {
-    // [ TODO ] this does no works!
-    origin.addEventListener("keydown", (e) => {
-      destiny.dispatchEvent(e);
-    });
-    origin.addEventListener("keyup", (e) => {
-      destiny.dispatchEvent(e);
-    });
-    origin.addEventListener("mousedown", (e) => {
-      destiny.dispatchEvent(e);
-    });
-    origin.addEventListener("mouseup", (e) => {
-      destiny.dispatchEvent(e);
-    });
-    origin.addEventListener("touchstart", (e) => {
-      destiny.dispatchEvent(e);
-    });
-    origin.addEventListener("touchend", (e) => {
-      destiny.dispatchEvent(e);
-    });
+function addActionsPrimary(origins: HTMLElement[], action: QinAction) {
+  for (const element of origins) {
+    addActionPrimary(element, action);
+  }
+}
+
+function addActionsPrimaryKey(origins: HTMLElement[], action: QinAction) {
+  for (const element of origins) {
+    addActionPrimary(element, action);
+  }
+}
+
+function addActionsPrimaryPoint(origins: HTMLElement[], action: QinAction) {
+  for (const element of origins) {
+    addActionPrimary(element, action);
   }
 }
 
@@ -666,10 +737,8 @@ function addResizer(
     var frameDragDifY = pointer.posY - dragInitEventY;
     var frameDragFinalWidth = dragInitWidth + frameDragDifX;
     var frameDragFinalHeight = dragInitHeight + frameDragDifY;
-    target.style.width =
-      (frameDragFinalWidth > 0 ? frameDragFinalWidth : 0) + "px";
-    target.style.height =
-      (frameDragFinalHeight > 0 ? frameDragFinalHeight : 0) + "px";
+    target.style.width = (frameDragFinalWidth > 0 ? frameDragFinalWidth : 0) + "px";
+    target.style.height = (frameDragFinalHeight > 0 ? frameDragFinalHeight : 0) + "px";
     if (dragCalls && dragCalls.onMove) {
       dragCalls.onMove();
     }
@@ -757,6 +826,8 @@ function addScroller(target: HTMLElement, dragCalls?: QinPointerCalls) {
 
 export const QinArm = {
   stopEvent,
+  getEventKey,
+  getEventPoint,
   makeEventPointer,
   isEventPointerDouble,
   isEventPointerLong,
@@ -774,9 +845,13 @@ export const QinArm = {
   isAuxiliaryPoint,
   isSecondaryPoint,
   addAction,
-  addActionMain,
+  addActionPrimary,
+  addActionPrimaryKey,
+  addActionPrimaryPoint,
   addActions,
-  putActionProxy,
+  addActionsPrimary,
+  addActionsPrimaryKey,
+  addActionsPrimaryPoint,
   addMover,
   addResizer,
   addScroller,
