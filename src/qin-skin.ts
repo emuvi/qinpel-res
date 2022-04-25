@@ -2,11 +2,11 @@ import { QinArm } from "./qin-arm";
 import { QinDimension, QinGrandeur } from "./qin-head"
 
 export const QinStyles = {
-    ColorForeground: "#180027",
-    ColorBackground: "#fffaef",
-    ColorInactive: "#faefff",
-    ColorActive: "#fadede",
-    ColorAccent: "#ae0000",
+    ColorForeground: "#180027ff",
+    ColorBackground: "#fffcf9ff",
+    ColorInactive: "#fcf9ffff",
+    ColorActive: "#fdededff",
+    ColorAccent: "#ae0000ff",
     ColorSelected: "#5d72de8f",
     FontName: "SourceSansPro",
     FontSize: "16px",
