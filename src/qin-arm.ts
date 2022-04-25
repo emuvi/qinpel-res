@@ -4,15 +4,23 @@ import { QinSkin } from "./qin-skin";
 export class QinEvent {
   private _origin: HTMLElement;
   private _start: boolean;
-  private _event: KeyboardEvent | MouseEvent | TouchEvent = null;
+  private _eventKey: KeyboardEvent = null;
+  private _eventMouse: MouseEvent = null;
+  private _eventTouch: TouchEvent = null;
   private _point: QinPoint = null;
   private _stop: boolean = false;
 
-  public constructor(origin: HTMLElement, isStart: boolean, event: KeyboardEvent | MouseEvent | TouchEvent) {
+  public constructor(origin: HTMLElement, isStart: boolean, kind: QinEventType) {
     this._origin = origin;
     this._start = isStart;
-    this._event = event;
-    this._point = makeEventPointer(isStart, getEventPoint(event));
+    this._eventKey = kind?.eventKey ?? null;
+    this._eventMouse = kind?.eventMouse ?? null;
+    this._eventTouch = kind?.eventTouch ?? null;
+    if (this._eventMouse) {
+      this._point = makeEventMousePoint(isStart, this._eventMouse);
+    } else if (this._eventTouch) {
+      this._point = makeEventTouch(isStart, this._eventTouch);
+    }
   }
 
   public get isStart(): boolean {
@@ -24,79 +32,101 @@ export class QinEvent {
   }
 
   public get fromTarget(): any {
-    if (this._event) {
-      return this._event.target;
+    if (this._eventKey) {
+      return this._eventKey.target;
+    } else if (this._eventMouse) {
+      return this._eventMouse.target;
+    } else if (this._eventTouch) {
+      return this._eventTouch.target;
     }
     return null;
   }
 
   public get fromTyping(): boolean {
-    return this._event instanceof KeyboardEvent;
+    return !!this._eventKey;
   }
 
   public get fromPointing(): boolean {
-    if (getEventPoint(this._event)) {
-      return true;
+    return !!this._point;
+  }
+
+  public get hasAlt(): boolean {
+    if (this._eventKey) {
+      return this._eventKey.altKey;
+    } else if (this._eventMouse) {
+      return this._eventMouse.altKey;
+    } else if (this._eventTouch) {
+      return this._eventTouch.altKey;
     }
     return false;
   }
 
-  public get hasAlt(): boolean {
-    return this._event?.altKey;
-  }
-
   public get hasCtrl(): boolean {
-    return this._event?.ctrlKey;
+    if (this._eventKey) {
+      return this._eventKey.ctrlKey;
+    } else if (this._eventMouse) {
+      return this._eventMouse.ctrlKey;
+    } else if (this._eventTouch) {
+      return this._eventTouch.ctrlKey;
+    }
+    return false;
   }
 
   public get hasShift(): boolean {
-    return this._event?.shiftKey;
+    if (this._eventKey) {
+      return this._eventKey.shiftKey;
+    } else if (this._eventMouse) {
+      return this._eventMouse.shiftKey;
+    } else if (this._eventTouch) {
+      return this._eventTouch.shiftKey;
+    }
+    return false;
   }
 
   public get hasMeta(): boolean {
-    return this._event?.metaKey;
+    if (this._eventKey) {
+      return this._eventKey.metaKey;
+    } else if (this._eventMouse) {
+      return this._eventMouse.metaKey;
+    } else if (this._eventTouch) {
+      return this._eventTouch.metaKey;
+    }
+    return false;
   }
 
   public get keyTyped(): string {
-    if (this._event instanceof KeyboardEvent) {
-      return this._event.key;
+    if (this._eventKey) {
+      return this._eventKey.key;
     }
     return null;
   }
 
   public get isEnter(): boolean {
-    if (this._event instanceof KeyboardEvent) {
-      return isKeyEnter(this._event);
-    }
-    return false;
+    return isKeyEnter(this._eventKey);
   }
 
   public get isEscape(): boolean {
-    if (this._event instanceof KeyboardEvent) {
-      return isKeyEscape(this._event);
-    }
-    return false;
+    return isKeyEscape(this._eventKey);
   }
 
   public get isSpace(): boolean {
-    if (this._event instanceof KeyboardEvent) {
-      return isKeySpace(this._event);
-    }
-    return false;
+    return isKeySpace(this._eventKey);
   }
 
   public get isDouble(): boolean {
-    let event = getEventPoint(this._event);
-    if (event) {
-      return isEventPointerDouble(this._start, event);
+    if (this._eventMouse) {
+      return isEventMouseDouble(this._start, this._eventMouse);
+    } else if (this._eventTouch) {
+      return isEventTouchDouble(this._start, this._eventTouch);
     }
     return false;
   }
 
   public get isLong(): boolean {
-    let event = getEventPoint(this._event);
-    if (event) {
-      return isEventPointerLong(this._start, event);
+    if (this._eventMouse) {
+      return isEventMouseLong(this._start, this._eventMouse);
+    } else if (this._eventTouch) {
+      return isEventTouchLong(this._start, this._eventTouch);
     }
     return false;
   }
@@ -106,89 +136,51 @@ export class QinEvent {
   }
 
   public get pointX(): number {
-    if (window.MouseEvent && this._event instanceof MouseEvent) {
-      return this._event.clientX;
-    } else if (window.TouchEvent && this._event instanceof TouchEvent) {
-      if (this._event.touches.length > 0) {
-        let index = (this._event.touches.length / 2) | 0;
-        return this._event.touches[index].clientX;
-      }
-    }
-    return null;
+    return this._point?.posX;
   }
 
   public get pointY(): number {
-    if (window.MouseEvent && this._event instanceof MouseEvent) {
-      return this._event.clientY;
-    } else if (window.TouchEvent && this._event instanceof TouchEvent) {
-      if (this._event.touches.length > 0) {
-        let index = (this._event.touches.length / 2) | 0;
-        return this._event.touches[index].clientY;
-      }
-    }
-    return null;
+    return this._point?.posY;
   }
 
   public get isFirstButton(): boolean {
-    if (window.MouseEvent && this._event instanceof MouseEvent) {
-      return isFirstButton(this._event);
-    }
-    return false;
+    return isFirstButton(this._eventMouse);
   }
 
   public get isMiddleButton(): boolean {
-    if (window.MouseEvent && this._event instanceof MouseEvent) {
-      return isMiddleButton(this._event);
-    }
-    return false;
+    return isMiddleButton(this._eventMouse);
   }
 
   public get isSecondButton(): boolean {
-    if (window.MouseEvent && this._event instanceof MouseEvent) {
-      return isSecondButton(this._event);
-    }
-    return false;
+    return isSecondButton(this._eventMouse);
   }
 
   public get isOneFinger(): boolean {
-    if (window.TouchEvent && this._event instanceof TouchEvent) {
-      return isOneFinger(this._event);
-    }
-    return false;
+    return isOneFinger(this._eventTouch);
   }
 
   public get isTwoFingers(): boolean {
-    if (window.TouchEvent && this._event instanceof TouchEvent) {
-      return isTwoFingers(this._event);
-    }
-    return false;
+    return isTwoFingers(this._eventTouch);
   }
 
   public get isThreeFingers(): boolean {
-    if (window.TouchEvent && this._event instanceof TouchEvent) {
-      return isThreeFingers(this._event);
-    }
-    return false;
+    return isThreeFingers(this._eventTouch);
   }
 
   public get isFourFingers(): boolean {
-    if (window.TouchEvent && this._event instanceof TouchEvent) {
-      return isFourFingers(this._event);
-    }
-    return false;
+    return isFourFingers(this._eventTouch);
   }
 
   public get isMain(): boolean {
     if (this._start) {
       return false;
     }
-    if (window.KeyboardEvent && this._event instanceof KeyboardEvent) {
-      return isMainKey(this._event);
-    } else if (
-      (window.MouseEvent && this._event instanceof MouseEvent) ||
-      (window.TouchEvent && this._event instanceof TouchEvent)
-    ) {
-      return isMainPoint(this._event);
+    if (this._eventKey) {
+      return isMainKey(this._eventKey);
+    } else if (this._eventMouse) {
+      return isMainMouse(this._eventMouse); 
+    } else if (this._eventTouch) {
+      return isMainTouch(this._eventTouch);
     }
     return false;
   }
@@ -197,99 +189,120 @@ export class QinEvent {
     if (this._start) {
       return false;
     }
-    if (window.KeyboardEvent && this._event instanceof KeyboardEvent) {
-      return isMainKey(this._event);
-    }
-    return false;
+    return isMainKey(this._eventKey);
   }
-  
+
+  public get isMainMouse(): boolean {
+    if (this._start) {
+      return false;
+    }
+    return isMainMouse(this._eventMouse);
+  }
+
+  public get isMainTouch(): boolean {
+    if (this._start) {
+      return false;
+    }
+    return isMainTouch(this._eventTouch);
+  }
+
   public get isMainPoint(): boolean {
     if (this._start) {
       return false;
     }
-    if (
-      (window.MouseEvent && this._event instanceof MouseEvent) ||
-      (window.TouchEvent && this._event instanceof TouchEvent)
-    ) {
-      return isMainPoint(this._event);
+    return isMainMouse(this._eventMouse) || isMainTouch(this._eventTouch);
+  }
+
+  public get isMidi(): boolean {
+    if (this._start) {
+      return false;
+    }
+    if (this._eventKey) {
+      return isMidiKey(this._eventKey);
+    } else if (this._eventMouse) {
+      return isMidiMouse(this._eventMouse);
+    } else if (this._eventTouch) {
+      return isMidiTouch(this._eventTouch);
     }
     return false;
   }
 
-  public get isAuxiliary(): boolean {
+  public get isMidiKey(): boolean {
     if (this._start) {
       return false;
     }
-    if (window.KeyboardEvent && this._event instanceof KeyboardEvent) {
-      return isAuxiliaryKey(this._event);
-    } else if (
-      (window.MouseEvent && this._event instanceof MouseEvent) ||
-      (window.TouchEvent && this._event instanceof TouchEvent)
-    ) {
-      return isAuxiliaryPoint(this._event);
+    return isMidiKey(this._eventKey);
+  }
+
+  public get isMidiMouse(): boolean {
+    if (this._start) {
+      return false;
+    }
+    return isMidiMouse(this._eventMouse);
+  }
+
+  public get isMidiTouch(): boolean {
+    if (this._start) {
+      return false;
+    }
+    return isMidiTouch(this._eventTouch);
+  }
+
+  public get isMidiPoint(): boolean {
+    if (this._start) {
+      return false;
+    }
+    if (this._eventMouse) {
+      return isMidiMouse(this._eventMouse);
+    } else if (this._eventTouch) {
+      return isMidiTouch(this._eventTouch);
     }
     return false;
   }
 
-  public get isAuxiliaryKey(): boolean {
+  public get isMenu(): boolean {
     if (this._start) {
       return false;
     }
-    if (window.KeyboardEvent && this._event instanceof KeyboardEvent) {
-      return isAuxiliaryKey(this._event);
+    if (this._eventKey) {
+      return isMenuKey(this._eventKey);
+    } else if (this._eventKey) {
+      return isMenuMouse(this._eventMouse);
+    } else if (this._eventKey) {
+      return isMenuTouch(this._eventTouch);
     }
     return false;
   }
 
-  
-
-  public get isAuxiliaryPoint(): boolean {
+  public get isMenuKey(): boolean {
     if (this._start) {
       return false;
     }
-    if (
-      (window.MouseEvent && this._event instanceof MouseEvent) ||
-      (window.TouchEvent && this._event instanceof TouchEvent)
-    ) {
-      return isAuxiliaryPoint(this._event);
-    }
-    return false;
+    return isMenuKey(this._eventKey);
   }
 
-  public get isSecondary(): boolean {
+  public get isMenuMouse(): boolean {
     if (this._start) {
       return false;
     }
-    if (window.KeyboardEvent && this._event instanceof KeyboardEvent) {
-      return isSecondaryKey(this._event);
-    } else if (
-      (window.MouseEvent && this._event instanceof MouseEvent) ||
-      (window.TouchEvent && this._event instanceof TouchEvent)
-    ) {
-      return isSecondaryPoint(this._event);
-    }
-    return false;
+    return isMenuMouse(this._eventMouse);
   }
 
-  public get isSecondaryKey(): boolean {
+  public get isMenuTouch(): boolean {
     if (this._start) {
       return false;
     }
-    if (window.KeyboardEvent && this._event instanceof KeyboardEvent) {
-      return isSecondaryKey(this._event);
-    }
-    return false;
+    return isMenuTouch(this._eventTouch);
   }
 
-  public get isSecondaryPoint(): boolean {
+  public get isMenuPoint(): boolean {
     if (this._start) {
       return false;
     }
-    if (
-      (window.MouseEvent && this._event instanceof MouseEvent) ||
-      (window.TouchEvent && this._event instanceof TouchEvent)
-    ) {
-      return isSecondaryPoint(this._event);
+    if (this._eventMouse) {
+      return isMenuMouse(this._eventMouse);
+    } else if (this._eventTouch) {
+      return isMenuTouch(this._eventTouch);
     }
     return false;
   }
@@ -302,6 +315,12 @@ export class QinEvent {
     this._stop = true;
   }
 }
+
+export type QinEventType = {
+  eventKey?: KeyboardEvent;
+  eventMouse?: MouseEvent;
+  eventTouch?: TouchEvent;
+};
 
 export type QinAction = (event: QinEvent) => void;
 
@@ -351,28 +370,10 @@ function stopEvent(event: any) {
   return false;
 }
 
-function getEventKey(ev: KeyboardEvent | MouseEvent | TouchEvent): KeyboardEvent {
-  if (window.KeyboardEvent && ev instanceof KeyboardEvent) {
-    return ev;
-  }
-  return null;
-}
+var lastEventMouse: MouseEvent = null;
+var lastEventTouch: TouchEvent = null;
 
-function getEventPoint(
-  ev: KeyboardEvent | MouseEvent | TouchEvent
-): MouseEvent | TouchEvent {
-  if (window.MouseEvent && ev instanceof MouseEvent) {
-    return ev;
-  }
-  if (window.TouchEvent && ev instanceof TouchEvent) {
-    return ev;
-  }
-  return null;
-}
-
-var lastEventPointer: MouseEvent | TouchEvent = null;
-
-function makeEventPointer(isStart: boolean, ev: MouseEvent | TouchEvent): QinPoint {
+function makeEventMousePoint(isStart: boolean, ev: MouseEvent): QinPoint {
   if (!ev) {
     return null;
   }
@@ -380,122 +381,206 @@ function makeEventPointer(isStart: boolean, ev: MouseEvent | TouchEvent): QinPoi
     posX: 0,
     posY: 0,
   };
-  if (window.MouseEvent && ev instanceof MouseEvent) {
-    if (ev.clientX || ev.clientY) {
-      result.posX = ev.clientX;
-      result.posY = ev.clientY;
-    }
-  } else if (window.TouchEvent && ev instanceof TouchEvent) {
-    if (ev.touches && this._event.touches.length > 1) {
-      let index = Math.floor(this._event.touches.length / 2);
-      result.posX = ev.touches[index].clientX;
-      result.posY = ev.touches[index].clientY;
-    }
+  if (ev.clientX || ev.clientY) {
+    result.posX = ev.clientX;
+    result.posY = ev.clientY;
   }
   if (isStart) {
-    lastEventPointer = ev;
+    lastEventMouse = ev;
   }
   return result;
 }
 
-function isEventPointerDouble(isStart: boolean, ev: MouseEvent | TouchEvent): boolean {
-  if (!isStart || lastEventPointer == null || ev == null) {
+function makeEventTouch(isStart: boolean, ev: TouchEvent): QinPoint {
+  if (!ev) {
+    return null;
+  }
+  const result = {
+    posX: 0,
+    posY: 0,
+  };
+  if (ev.touches && this._event.touches.length >= 1) {
+    let index = Math.floor(this._event.touches.length / 2);
+    result.posX = ev.touches[index].clientX;
+    result.posY = ev.touches[index].clientY;
+  }
+  if (isStart) {
+    lastEventTouch = ev;
+  }
+  return result;
+}
+
+function isEventMouseDouble(isStart: boolean, ev: MouseEvent): boolean {
+  if (!isStart || lastEventMouse == null || ev == null) {
     return false;
   }
-  const timeDif = ev.timeStamp - lastEventPointer.timeStamp;
+  const timeDif = ev.timeStamp - lastEventMouse.timeStamp;
   return timeDif < 450;
 }
 
-function isEventPointerLong(isStart: boolean, ev: MouseEvent | TouchEvent): boolean {
-  if (!isStart || lastEventPointer == null || ev == null) {
+function isEventTouchDouble(isStart: boolean, ev: TouchEvent): boolean {
+  if (!isStart || lastEventTouch == null || ev == null) {
     return false;
   }
-  const timeDif = ev.timeStamp - lastEventPointer.timeStamp;
+  const timeDif = ev.timeStamp - lastEventTouch.timeStamp;
+  return timeDif < 450;
+}
+
+function isEventMouseLong(isStart: boolean, ev: MouseEvent): boolean {
+  if (!isStart || lastEventMouse == null || ev == null) {
+    return false;
+  }
+  const timeDif = ev.timeStamp - lastEventMouse.timeStamp;
+  return timeDif > 840;
+}
+
+function isEventTouchLong(isStart: boolean, ev: TouchEvent): boolean {
+  if (!isStart || lastEventTouch == null || ev == null) {
+    return false;
+  }
+  const timeDif = ev.timeStamp - lastEventTouch.timeStamp;
   return timeDif > 840;
 }
 
 function isKeyInList(ev: KeyboardEvent, list: string[]): boolean {
+  if (!ev) {
+    return false;
+  }
   let keyLower = ev.key.toLowerCase();
   return list.indexOf(keyLower) > -1;
 }
 
 function isKeyEnter(ev: KeyboardEvent): boolean {
+  if (!ev) {
+    return false;
+  }
   return isKeyInList(ev, ["enter", "return"]) || ev.keyCode === 13;
 }
 
 function isKeyEscape(ev: KeyboardEvent): boolean {
+  if (!ev) {
+    return false;
+  }
   return isKeyInList(ev, ["esc", "escape"]) || ev.keyCode === 27;
 }
 
 function isKeySpace(ev: KeyboardEvent): boolean {
+  if (!ev) {
+    return false;
+  }
   return isKeyInList(ev, [" ", "space", "spacebar"]) || ev.keyCode === 32;
 }
 
 function isFirstButton(ev: MouseEvent): boolean {
+  if (!ev) {
+    return false;
+  }
   return ev?.button == 0;
 }
 
 function isMiddleButton(ev: MouseEvent): boolean {
+  if (!ev) {
+    return false;
+  }
   return ev?.button == 1;
 }
 
 function isSecondButton(ev: MouseEvent): boolean {
+  if (!ev) {
+    return false;
+  }
   return ev?.button == 2;
 }
 
 function isOneFinger(ev: TouchEvent): boolean {
+  if (!ev) {
+    return false;
+  }
   return ev?.touches.length == 1;
 }
 
 function isTwoFingers(ev: TouchEvent): boolean {
+  if (!ev) {
+    return false;
+  }
   return ev?.touches.length == 2;
 }
 
 function isThreeFingers(ev: TouchEvent): boolean {
+  if (!ev) {
+    return false;
+  }
   return ev?.touches.length == 3;
 }
 
 function isFourFingers(ev: TouchEvent): boolean {
+  if (!ev) {
+    return false;
+  }
   return ev?.touches.length == 4;
 }
 
 function isMainKey(ev: KeyboardEvent): boolean {
+  if (!ev) {
+    return false;
+  }
   return isKeyEnter(ev);
 }
 
-function isAuxiliaryKey(ev: KeyboardEvent): boolean {
+function isMidiKey(ev: KeyboardEvent): boolean {
+  if (!ev) {
+    return false;
+  }
   return ev.ctrlKey && ev.altKey && isKeySpace(ev);
 }
 
-function isSecondaryKey(ev: KeyboardEvent): boolean {
+function isMenuKey(ev: KeyboardEvent): boolean {
+  if (!ev) {
+    return false;
+  }
   return ev.ctrlKey && !ev.altKey && isKeySpace(ev);
 }
 
-function isMainPoint(ev: MouseEvent | TouchEvent): boolean {
-  if (window.MouseEvent && ev instanceof MouseEvent) {
-    return isFirstButton(ev);
-  } else if (window.TouchEvent && ev instanceof TouchEvent) {
-    return isOneFinger(ev);
+function isMainMouse(ev: MouseEvent): boolean {
+  if (!ev) {
+    return false;
   }
-  return false;
+  return isFirstButton(ev);
 }
 
-function isAuxiliaryPoint(ev: MouseEvent | TouchEvent): boolean {
-  if (window.MouseEvent && ev instanceof MouseEvent) {
-    return isMiddleButton(ev);
-  } else if (window.TouchEvent && ev instanceof TouchEvent) {
-    return isThreeFingers(ev);
+function isMainTouch(ev: TouchEvent): boolean {
+  if (!ev) {
+    return false;
   }
-  return false;
+  return isOneFinger(ev);
 }
 
-function isSecondaryPoint(ev: MouseEvent | TouchEvent): boolean {
-  if (window.MouseEvent && ev instanceof MouseEvent) {
-    return isSecondButton(ev);
-  } else if (window.TouchEvent && ev instanceof TouchEvent) {
-    return isTwoFingers(ev);
+function isMidiMouse(ev: MouseEvent): boolean {
+  if (!ev) {
+    return false;
   }
-  return false;
+  return isMiddleButton(ev);
+}
+
+function isMidiTouch(ev: TouchEvent): boolean {
+  if (!ev) {
+    return false;
+  }
+  return isThreeFingers(ev);
+}
+
+function isMenuMouse(ev: MouseEvent): boolean {
+  if (!ev) {
+    return false;
+  }
+  return isSecondButton(ev);
+}
+
+function isMenuTouch(ev: TouchEvent): boolean {
+  if (!ev) {
+    return false;
+  }
+  return isTwoFingers(ev);
 }
 
 function addAction(origin: HTMLElement, action: QinAction) {
@@ -507,7 +592,7 @@ function addAction(origin: HTMLElement, action: QinAction) {
   origin.addEventListener("touchend", actTouchEnd);
 
   function actKeyDown(ev: KeyboardEvent) {
-    let qinEvent = new QinEvent(origin, true, ev);
+    let qinEvent = new QinEvent(origin, true, {eventKey: ev});
     action(qinEvent);
     if (qinEvent.stop) {
       return stopEvent(ev);
@@ -517,7 +602,7 @@ function addAction(origin: HTMLElement, action: QinAction) {
   }
 
   function actKeyUp(ev: KeyboardEvent) {
-    let qinEvent = new QinEvent(origin, false, ev);
+    let qinEvent = new QinEvent(origin, false, {eventKey: ev});
     action(qinEvent);
     if (qinEvent.stop) {
       return stopEvent(ev);
@@ -527,7 +612,7 @@ function addAction(origin: HTMLElement, action: QinAction) {
   }
 
   function actMouseDown(ev: MouseEvent) {
-    let qinEvent = new QinEvent(origin, true, ev);
+    let qinEvent = new QinEvent(origin, true, {eventMouse: ev});
     action(qinEvent);
     if (qinEvent.stop) {
       return stopEvent(ev);
@@ -537,7 +622,7 @@ function addAction(origin: HTMLElement, action: QinAction) {
   }
 
   function actMouseUp(ev: MouseEvent) {
-    let qinEvent = new QinEvent(origin, false, ev);
+    let qinEvent = new QinEvent(origin, false, {eventMouse: ev});
     action(qinEvent);
     if (qinEvent.stop) {
       return stopEvent(ev);
@@ -547,7 +632,7 @@ function addAction(origin: HTMLElement, action: QinAction) {
   }
 
   function actTouchStart(ev: TouchEvent) {
-    let qinEvent = new QinEvent(origin, true, ev);
+    let qinEvent = new QinEvent(origin, true, {eventTouch: ev});
     action(qinEvent);
     if (qinEvent.stop) {
       return stopEvent(ev);
@@ -557,7 +642,7 @@ function addAction(origin: HTMLElement, action: QinAction) {
   }
 
   function actTouchEnd(ev: TouchEvent) {
-    let qinEvent = new QinEvent(origin, false, ev);
+    let qinEvent = new QinEvent(origin, false, {eventTouch: ev});
     action(qinEvent);
     if (qinEvent.stop) {
       return stopEvent(ev);
@@ -626,32 +711,32 @@ function addMover(
   var dragInitPosY = 0;
 
   for (let source of sources) {
-    source.onmousedown = onMoverInit;
-    source.ontouchstart = onMoverInit;
+    source.onmousedown = onMoverMouseInit;
+    source.ontouchstart = onMoverTouchInit;
     source.ondragstart = stopEvent;
   }
 
-  function onMoverInit(ev: MouseEvent | TouchEvent) {
+  function onMoverMouseInit(ev: MouseEvent) {
     if (document.onmousemove || document.ontouchmove) {
       return;
     }
-    if (dragCalls && dragCalls.onDouble && isEventPointerDouble(true, ev)) {
+    if (dragCalls && dragCalls.onDouble && isEventMouseDouble(true, ev)) {
       dragCalls.onDouble();
       return;
     }
-    if (dragCalls && dragCalls.onLong && isEventPointerLong(true, ev)) {
+    if (dragCalls && dragCalls.onLong && isEventMouseLong(true, ev)) {
       dragCalls.onLong();
       return;
     }
-    const pointer = makeEventPointer(true, ev);
+    const pointer = makeEventMousePoint(true, ev);
     dragInitEventX = pointer.posX;
     dragInitEventY = pointer.posY;
     dragInitPosX = parseInt(target.style.left, 10);
     dragInitPosY = parseInt(target.style.top, 10);
-    document.ontouchmove = onMoverMove;
-    document.onmousemove = onMoverMove;
-    document.ontouchend = onMoverClose;
+    document.onmousemove = onMoverMouseMove;
+    document.ontouchmove = onMoverTouchMove;
     document.onmouseup = onMoverClose;
+    document.ontouchend = onMoverClose;
     QinSkin.hideAllIFrames();
     if (dragCalls && dragCalls.onStart) {
       dragCalls.onStart();
@@ -659,8 +744,50 @@ function addMover(
     return stopEvent(ev);
   }
 
-  function onMoverMove(ev: MouseEvent | TouchEvent) {
-    const pointer = makeEventPointer(false, ev);
+  function onMoverTouchInit(ev: TouchEvent) {
+    if (document.onmousemove || document.ontouchmove) {
+      return;
+    }
+    if (dragCalls && dragCalls.onDouble && isEventTouchDouble(true, ev)) {
+      dragCalls.onDouble();
+      return;
+    }
+    if (dragCalls && dragCalls.onLong && isEventTouchLong(true, ev)) {
+      dragCalls.onLong();
+      return;
+    }
+    const pointer = makeEventTouch(true, ev);
+    dragInitEventX = pointer.posX;
+    dragInitEventY = pointer.posY;
+    dragInitPosX = parseInt(target.style.left, 10);
+    dragInitPosY = parseInt(target.style.top, 10);
+    document.onmousemove = onMoverMouseMove;
+    document.ontouchmove = onMoverTouchMove;
+    document.onmouseup = onMoverClose;
+    document.ontouchend = onMoverClose;
+    QinSkin.hideAllIFrames();
+    if (dragCalls && dragCalls.onStart) {
+      dragCalls.onStart();
+    }
+    return stopEvent(ev);
+  }
+
+  function onMoverMouseMove(ev: MouseEvent) {
+    const pointer = makeEventMousePoint(false, ev);
+    var dragDifX = pointer.posX - dragInitEventX;
+    var dragDifY = pointer.posY - dragInitEventY;
+    var dragFinalX = dragInitPosX + dragDifX;
+    var dragFinalY = dragInitPosY + dragDifY;
+    target.style.left = (dragFinalX > 0 ? dragFinalX : 0) + "px";
+    target.style.top = (dragFinalY > 0 ? dragFinalY : 0) + "px";
+    if (dragCalls && dragCalls.onMove) {
+      dragCalls.onMove();
+    }
+    return stopEvent(ev);
+  }
+
+  function onMoverTouchMove(ev: TouchEvent) {
+    const pointer = makeEventTouch(false, ev);
     var dragDifX = pointer.posX - dragInitEventX;
     var dragDifY = pointer.posY - dragInitEventY;
     var dragFinalX = dragInitPosX + dragDifX;
@@ -698,32 +825,32 @@ function addResizer(
   var dragInitHeight = 0;
 
   for (let source of sources) {
-    source.onmousedown = onResizerInit;
-    source.ontouchstart = onResizerInit;
+    source.onmousedown = onResizerMouseInit;
+    source.ontouchstart = onResizerTouchInit;
     source.ondragstart = stopEvent;
   }
 
-  function onResizerInit(ev: MouseEvent | TouchEvent) {
+  function onResizerMouseInit(ev: MouseEvent) {
     if (document.onmousemove || document.ontouchmove) {
       return;
     }
-    if (dragCalls && dragCalls.onDouble && isEventPointerDouble(true, ev)) {
+    if (dragCalls && dragCalls.onDouble && isEventMouseDouble(true, ev)) {
       dragCalls.onDouble();
       return;
     }
-    if (dragCalls && dragCalls.onLong && isEventPointerLong(true, ev)) {
+    if (dragCalls && dragCalls.onLong && isEventMouseLong(true, ev)) {
       dragCalls.onLong();
       return;
     }
-    const pointer = makeEventPointer(true, ev);
+    const pointer = makeEventMousePoint(true, ev);
     dragInitEventX = pointer.posX;
     dragInitEventY = pointer.posY;
     dragInitWidth = parseInt(target.style.width, 10);
     dragInitHeight = parseInt(target.style.height, 10);
-    document.ontouchmove = onResizerMove;
-    document.onmousemove = onResizerMove;
-    document.ontouchend = onResizerClose;
+    document.onmousemove = onResizerMouseMove;
+    document.ontouchmove = onResizerTouchMove;
     document.onmouseup = onResizerClose;
+    document.ontouchend = onResizerClose;
     QinSkin.hideAllIFrames();
     if (dragCalls && dragCalls.onStart) {
       dragCalls.onStart();
@@ -731,8 +858,50 @@ function addResizer(
     return stopEvent(ev);
   }
 
-  function onResizerMove(ev: MouseEvent | TouchEvent) {
-    const pointer = makeEventPointer(false, ev);
+  function onResizerTouchInit(ev: TouchEvent) {
+    if (document.onmousemove || document.ontouchmove) {
+      return;
+    }
+    if (dragCalls && dragCalls.onDouble && isEventTouchDouble(true, ev)) {
+      dragCalls.onDouble();
+      return;
+    }
+    if (dragCalls && dragCalls.onLong && isEventTouchLong(true, ev)) {
+      dragCalls.onLong();
+      return;
+    }
+    const pointer = makeEventTouch(true, ev);
+    dragInitEventX = pointer.posX;
+    dragInitEventY = pointer.posY;
+    dragInitWidth = parseInt(target.style.width, 10);
+    dragInitHeight = parseInt(target.style.height, 10);
+    document.onmousemove = onResizerMouseMove;
+    document.ontouchmove = onResizerTouchMove;
+    document.onmouseup = onResizerClose;
+    document.ontouchend = onResizerClose;
+    QinSkin.hideAllIFrames();
+    if (dragCalls && dragCalls.onStart) {
+      dragCalls.onStart();
+    }
+    return stopEvent(ev);
+  }
+
+  function onResizerMouseMove(ev: MouseEvent) {
+    const pointer = makeEventMousePoint(false, ev);
+    var frameDragDifX = pointer.posX - dragInitEventX;
+    var frameDragDifY = pointer.posY - dragInitEventY;
+    var frameDragFinalWidth = dragInitWidth + frameDragDifX;
+    var frameDragFinalHeight = dragInitHeight + frameDragDifY;
+    target.style.width = (frameDragFinalWidth > 0 ? frameDragFinalWidth : 0) + "px";
+    target.style.height = (frameDragFinalHeight > 0 ? frameDragFinalHeight : 0) + "px";
+    if (dragCalls && dragCalls.onMove) {
+      dragCalls.onMove();
+    }
+    return stopEvent(ev);
+  }
+
+  function onResizerTouchMove(ev: TouchEvent) {
+    const pointer = makeEventTouch(false, ev);
     var frameDragDifX = pointer.posX - dragInitEventX;
     var frameDragDifY = pointer.posY - dragInitEventY;
     var frameDragFinalWidth = dragInitWidth + frameDragDifX;
@@ -766,28 +935,28 @@ function addScroller(target: HTMLElement, dragCalls?: QinPointerCalls) {
   var dragScrollY = 0;
 
   target.ondragstart = stopEvent;
-  target.ontouchstart = onScrollerInit;
-  target.onmousedown = onScrollerInit;
+  target.onmousedown = onScrollerMouseInit;
+  target.ontouchstart = onScrollerTouchInit;
 
-  function onScrollerInit(ev: MouseEvent | TouchEvent) {
+  function onScrollerMouseInit(ev: MouseEvent) {
     if (document.onmousemove || document.ontouchmove) {
       return;
     }
-    if (dragCalls && dragCalls.onDouble && isEventPointerDouble(true, ev)) {
+    if (dragCalls && dragCalls.onDouble && isEventMouseDouble(true, ev)) {
       dragCalls.onDouble();
       return;
     }
-    if (dragCalls && dragCalls.onLong && isEventPointerLong(true, ev)) {
+    if (dragCalls && dragCalls.onLong && isEventMouseLong(true, ev)) {
       dragCalls.onLong();
       return;
     }
-    const pointer = makeEventPointer(true, ev);
+    const pointer = makeEventMousePoint(true, ev);
     dragInitX = pointer.posX;
     dragInitY = pointer.posY;
     dragScrollX = target.scrollLeft;
     dragScrollY = target.scrollTop;
-    document.ontouchmove = onScrollerMove;
-    document.onmousemove = onScrollerMove;
+    document.onmousemove = onScrollerMouseMove;
+    document.ontouchmove = onScrollerTouchMove;
     document.ontouchend = onScrollerClose;
     document.onmouseup = onScrollerClose;
     QinSkin.hideAllIFrames();
@@ -797,8 +966,49 @@ function addScroller(target: HTMLElement, dragCalls?: QinPointerCalls) {
     return stopEvent(ev);
   }
 
-  function onScrollerMove(ev: MouseEvent | TouchEvent) {
-    const pointer = makeEventPointer(false, ev);
+  function onScrollerTouchInit(ev: TouchEvent) {
+    if (document.onmousemove || document.ontouchmove) {
+      return;
+    }
+    if (dragCalls && dragCalls.onDouble && isEventTouchDouble(true, ev)) {
+      dragCalls.onDouble();
+      return;
+    }
+    if (dragCalls && dragCalls.onLong && isEventTouchLong(true, ev)) {
+      dragCalls.onLong();
+      return;
+    }
+    const pointer = makeEventTouch(true, ev);
+    dragInitX = pointer.posX;
+    dragInitY = pointer.posY;
+    dragScrollX = target.scrollLeft;
+    dragScrollY = target.scrollTop;
+    document.onmousemove = onScrollerMouseMove;
+    document.ontouchmove = onScrollerTouchMove;
+    document.onmouseup = onScrollerClose;
+    document.ontouchend = onScrollerClose;
+    QinSkin.hideAllIFrames();
+    if (dragCalls && dragCalls.onStart) {
+      dragCalls.onStart();
+    }
+    return stopEvent(ev);
+  }
+
+  function onScrollerMouseMove(ev: MouseEvent) {
+    const pointer = makeEventMousePoint(false, ev);
+    var dragDifX = pointer.posX - dragInitX;
+    var dragDifY = pointer.posY - dragInitY;
+    var dragNewX = dragScrollX - dragDifX;
+    var dragNewY = dragScrollY - dragDifY;
+    target.scrollTo(dragNewX, dragNewY);
+    if (dragCalls && dragCalls.onMove) {
+      dragCalls.onMove();
+    }
+    return stopEvent(ev);
+  }
+
+  function onScrollerTouchMove(ev: TouchEvent) {
+    const pointer = makeEventTouch(false, ev);
     var dragDifX = pointer.posX - dragInitX;
     var dragDifY = pointer.posY - dragInitY;
     var dragNewX = dragScrollX - dragDifX;
@@ -826,11 +1036,12 @@ function addScroller(target: HTMLElement, dragCalls?: QinPointerCalls) {
 
 export const QinArm = {
   stopEvent,
-  getEventKey,
-  getEventPoint,
-  makeEventPointer,
-  isEventPointerDouble,
-  isEventPointerLong,
+  makeEventMousePoint,
+  makeEventTouch,
+  isEventMouseDouble,
+  isEventTouchDouble,
+  isEventMouseLong,
+  isEventTouchLong,
   isKeyInList,
   isKeyEnter,
   isKeySpace,
@@ -841,9 +1052,12 @@ export const QinArm = {
   isTwoFingers,
   isThreeFingers,
   isFourFingers,
-  isMainPoint,
-  isAuxiliaryPoint,
-  isSecondaryPoint,
+  isMainMouse,
+  isMainTouch,
+  isMidiMouse,
+  isMidiTouch,
+  isMenuMouse,
+  isMenuTouch,
   addAction,
   addActionMain,
   addActionMainKey,

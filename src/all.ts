@@ -1,4 +1,5 @@
 export { QinEvent } from './qin-arm';
+export { QinEventType } from './qin-arm';
 export { QinAction } from './qin-arm';
 export { QinWaiter } from './qin-arm';
 export { QinWaiters } from './qin-arm';
