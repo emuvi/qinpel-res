@@ -22,16 +22,20 @@ function styleAsBody(el: HTMLElement) {
     el.style.overflow = "auto";
 }
 
-function styleAsEdit(el: HTMLElement) {
+function styleAsBase(el: HTMLElement) {
     el.style.margin = "1px";
     el.style.padding = "3px";
     el.style.outline = "none";
-    el.style.border = "1px solid " + QinStyles.ColorForeground;
-    el.style.borderRadius = "3px";
     el.style.color = QinStyles.ColorForeground;
-    el.style.backgroundColor = QinStyles.ColorInactive;
     el.style.fontFamily = "SourceSansPro";
     el.style.fontSize = "16px";
+}
+
+function styleAsEdit(el: HTMLElement) {
+    styleAsBase(el);
+    el.style.border = "1px solid " + QinStyles.ColorForeground;
+    el.style.borderRadius = "3px";
+    el.style.backgroundColor = QinStyles.ColorInactive;
     el.addEventListener("focus", () => {
         el.style.outline = "none";
         el.style.backgroundColor = QinStyles.ColorActive;
@@ -211,6 +215,7 @@ function getDimensionLarge(): QinDimension {
 export const QinSkin = {
     styles: QinStyles,
     styleAsBody,
+    styleAsBase,
     styleAsEdit,
     styleMaxSizeForNotOverFlow,
     styleSize,
