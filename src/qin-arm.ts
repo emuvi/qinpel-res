@@ -668,9 +668,105 @@ function addActionMainKey(origin: HTMLElement, action: QinAction) {
   });
 }
 
+function addActionMainMouse(origin: HTMLElement, action: QinAction) {
+  addAction(origin, (qinEvent: QinEvent) => {
+    if (qinEvent.isMainMouse) {
+      action(qinEvent);
+    }
+  });
+}
+
+function addActionMainTouch(origin: HTMLElement, action: QinAction) {
+  addAction(origin, (qinEvent: QinEvent) => {
+    if (qinEvent.isMainMouse) {
+      action(qinEvent);
+    }
+  });
+}
+
 function addActionMainPoint(origin: HTMLElement, action: QinAction) {
   addAction(origin, (qinEvent: QinEvent) => {
     if (qinEvent.isMainPoint) {
+      action(qinEvent);
+    }
+  });
+}
+
+function addActionMidi(origin: HTMLElement, action: QinAction) {
+  addAction(origin, (qinEvent: QinEvent) => {
+    if (qinEvent.isMidi) {
+      action(qinEvent);
+    }
+  });
+}
+
+function addActionMidiKey(origin: HTMLElement, action: QinAction) {
+  addAction(origin, (qinEvent: QinEvent) => {
+    if (qinEvent.isMidiKey) {
+      action(qinEvent);
+    }
+  });
+}
+
+function addActionMidiMouse(origin: HTMLElement, action: QinAction) {
+  addAction(origin, (qinEvent: QinEvent) => {
+    if (qinEvent.isMidiMouse) {
+      action(qinEvent);
+    }
+  });
+}
+
+function addActionMidiTouch(origin: HTMLElement, action: QinAction) {
+  addAction(origin, (qinEvent: QinEvent) => {
+    if (qinEvent.isMidiMouse) {
+      action(qinEvent);
+    }
+  });
+}
+
+function addActionMidiPoint(origin: HTMLElement, action: QinAction) {
+  addAction(origin, (qinEvent: QinEvent) => {
+    if (qinEvent.isMidiPoint) {
+      action(qinEvent);
+    }
+  });
+}
+
+function addActionMenu(origin: HTMLElement, action: QinAction) {
+  addAction(origin, (qinEvent: QinEvent) => {
+    if (qinEvent.isMenu) {
+      action(qinEvent);
+    }
+  });
+}
+
+function addActionMenuKey(origin: HTMLElement, action: QinAction) {
+  addAction(origin, (qinEvent: QinEvent) => {
+    if (qinEvent.isMenuKey) {
+      action(qinEvent);
+    }
+  });
+}
+
+function addActionMenuMouse(origin: HTMLElement, action: QinAction) {
+  addAction(origin, (qinEvent: QinEvent) => {
+    if (qinEvent.isMenuMouse) {
+      action(qinEvent);
+    }
+  });
+}
+
+function addActionMenuTouch(origin: HTMLElement, action: QinAction) {
+  addAction(origin, (qinEvent: QinEvent) => {
+    if (qinEvent.isMenuMouse) {
+      action(qinEvent);
+    }
+  });
+}
+
+function addActionMenuPoint(origin: HTMLElement, action: QinAction) {
+  addAction(origin, (qinEvent: QinEvent) => {
+    if (qinEvent.isMenuPoint) {
       action(qinEvent);
     }
   });
@@ -1061,7 +1157,19 @@ export const QinArm = {
   addAction,
   addActionMain,
   addActionMainKey,
+  addActionMainMouse,
+  addActionMainTouch,
   addActionMainPoint,
+  addActionMidi,
+  addActionMidiKey,
+  addActionMidiMouse,
+  addActionMidiTouch,
+  addActionMidiPoint,
+  addActionMenu,
+  addActionMenuKey,
+  addActionMenuMouse,
+  addActionMenuTouch,
+  addActionMenuPoint,
   addActions,
   addActionsMain,
   addActionsMainKey,
