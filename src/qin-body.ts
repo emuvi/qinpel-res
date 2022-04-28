@@ -1,59 +1,57 @@
-function getCookie(name: string, orDefault?: string): string {
-  let cookies = document.cookie.split(";");
-  for (var i = 0; i < cookies.length; i++) {
-    let cookiePair = cookies[i].split("=");
-    if (name == decodeURIComponent(cookiePair[0]).trim()) {
-      return decodeURIComponent(cookiePair[1]);
-    }
-  }
-  return orDefault;
-}
-
-function setCookie(name: string, value: any, options: any = {}) {
-  options = {
-    path: "/",
-    ...options,
-  };
-  if (!options.expires) {
-    let date = new Date();
-    date.setTime(date.getTime() + 1 * 24 * 60 * 60 * 1000);
-    options.expires = date;
-  }
-  if (options.expires instanceof Date) {
-    options.expires = options.expires.toUTCString();
-  }
-  options["SameSite"] = "Strict";
-  let updatedCookie =
-    encodeURIComponent(name) + "=" + encodeURIComponent(value);
-  for (let optionKey in options) {
-    updatedCookie += "; " + optionKey;
-    let optionValue = options[optionKey];
-    if (optionValue !== true) {
-      updatedCookie += "=" + optionValue;
-    }
-  }
-  updatedCookie += "; Secure";
-  document.cookie = updatedCookie;
-}
-
-function delCookie(name: string, options: any = {}) {
-  let updatedCookie =
-    encodeURIComponent(name) + "=;  expires=Thu, 01 Jan 1970 00:00:00 GMT";
-  if (options.expires) {
-    delete options.expires;
-  }
-  for (let optionKey in options) {
-    updatedCookie += "; " + optionKey;
-    let optionValue = options[optionKey];
-    if (optionValue !== true) {
-      updatedCookie += "=" + optionValue;
-    }
-  }
-  document.cookie = updatedCookie;
+export enum QinNature {
+  BIT = "BIT",
+  BOOL = "BOOL",
+  BYTE = "BYTE",
+  TINY = "TINY",
+  SMALL = "SMALL",
+  INT = "INT",
+  LONG = "LONG",
+  SERIAL = "SERIAL",
+  BIG_SERIAL = "BIG_SERIAL",
+  FLOAT = "FLOAT",
+  REAL = "REAL",
+  DOUBLE = "DOUBLE",
+  NUMERIC = "NUMERIC",
+  BIG_NUMERIC = "BIG_NUMERIC",
+  CHAR = "CHAR",
+  CHARS = "CHARS",
+  DATE = "DATE",
+  TIME = "TIME",
+  DATE_TIME = "DATE_TIME",
+  TIMESTAMP = "TIMESTAMP",
+  BYTES = "BYTES",
+  BLOB = "BLOB",
+  TEXT = "TEXT",
 }
 
 function getTextLines(fromText: string): string[] {
   return fromText.match(/[^\r\n]+/g);
+}
+
+function fillToString(
+  value: any,
+  tilSize: number,
+  withStr: string = " ",
+  atEnd: boolean = true
+): string {
+  let result = value.toString();
+  while (result.length < tilSize) {
+    if (atEnd) {
+      result += withStr;
+    } else {
+      result = withStr + result;
+    }
+  }
+  return result;
+}
+
+function makeQinUID(): string {
+  return (
+    "qin_uid_" +
+    Date.now() +
+    "_" +
+    fillToString(Math.floor(Math.random() * 10000), 5, "0", false)
+  );
 }
 
 function getCSVRows(fromText: string, names?: string[]): string[][] | object[] {
@@ -68,8 +66,7 @@ function getCSVRows(fromText: string, names?: string[]): string[][] | object[] {
       let actual = line.charAt(char_index);
       if (inside_quotes) {
         if (actual == '"') {
-          let next =
-            char_index < line.length - 1 ? line.charAt(char_index + 1) : "";
+          let next = char_index < line.length - 1 ? line.charAt(char_index + 1) : "";
           if (next == '"') {
             column_value += actual;
             char_index++;
@@ -168,10 +165,9 @@ function parseParameters(source: string): string[] {
 }
 
 export const QinBody = {
-  getCookie,
-  setCookie,
-  delCookie,
   getTextLines,
+  fillToString,
+  makeQinUID,
   getCSVRows,
   maskSpecialChars,
   unmaskSpecialChars,

@@ -1,5 +1,4 @@
-import { QinPoint } from "./qin-head";
-import { QinSkin } from "./qin-skin";
+import { QinSkin, QinPoint } from "./qin-skin";
 
 export class QinEvent {
   private _origin: HTMLElement;
@@ -178,7 +177,7 @@ export class QinEvent {
     if (this._eventKey) {
       return isMainKey(this._eventKey);
     } else if (this._eventMouse) {
-      return isMainMouse(this._eventMouse); 
+      return isMainMouse(this._eventMouse);
     } else if (this._eventTouch) {
       return isMainTouch(this._eventTouch);
     }
@@ -592,7 +591,7 @@ function addAction(origin: HTMLElement, action: QinAction) {
   origin.addEventListener("touchend", actTouchEnd);
 
   function actKeyDown(ev: KeyboardEvent) {
-    let qinEvent = new QinEvent(origin, true, {eventKey: ev});
+    let qinEvent = new QinEvent(origin, true, { eventKey: ev });
     action(qinEvent);
     if (qinEvent.stop) {
       return stopEvent(ev);
@@ -602,7 +601,7 @@ function addAction(origin: HTMLElement, action: QinAction) {
   }
 
   function actKeyUp(ev: KeyboardEvent) {
-    let qinEvent = new QinEvent(origin, false, {eventKey: ev});
+    let qinEvent = new QinEvent(origin, false, { eventKey: ev });
     action(qinEvent);
     if (qinEvent.stop) {
       return stopEvent(ev);
@@ -612,7 +611,7 @@ function addAction(origin: HTMLElement, action: QinAction) {
   }
 
   function actMouseDown(ev: MouseEvent) {
-    let qinEvent = new QinEvent(origin, true, {eventMouse: ev});
+    let qinEvent = new QinEvent(origin, true, { eventMouse: ev });
     action(qinEvent);
     if (qinEvent.stop) {
       return stopEvent(ev);
@@ -622,7 +621,7 @@ function addAction(origin: HTMLElement, action: QinAction) {
   }
 
   function actMouseUp(ev: MouseEvent) {
-    let qinEvent = new QinEvent(origin, false, {eventMouse: ev});
+    let qinEvent = new QinEvent(origin, false, { eventMouse: ev });
     action(qinEvent);
     if (qinEvent.stop) {
       return stopEvent(ev);
@@ -632,7 +631,7 @@ function addAction(origin: HTMLElement, action: QinAction) {
   }
 
   function actTouchStart(ev: TouchEvent) {
-    let qinEvent = new QinEvent(origin, true, {eventTouch: ev});
+    let qinEvent = new QinEvent(origin, true, { eventTouch: ev });
     action(qinEvent);
     if (qinEvent.stop) {
       return stopEvent(ev);
@@ -642,7 +641,7 @@ function addAction(origin: HTMLElement, action: QinAction) {
   }
 
   function actTouchEnd(ev: TouchEvent) {
-    let qinEvent = new QinEvent(origin, false, {eventTouch: ev});
+    let qinEvent = new QinEvent(origin, false, { eventTouch: ev });
     action(qinEvent);
     if (qinEvent.stop) {
       return stopEvent(ev);

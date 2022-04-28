@@ -1,25 +1,55 @@
-export class QinPoint {
-    posX: number;
-    posY: number;
-};
-
-export class QinDimension {
-    width: number;
-    height: number;
-};
-
-export class QinBounds {
-    posX: number;
-    posY: number;
-    width: number;
-    height: number;
-};
-
-export enum QinGrandeur {
-    SMALL = "small",
-    MEDIUM = "medium",
-    LARGE = "large",
-}
+function getCookie(name: string, orDefault?: string): string {
+    let cookies = document.cookie.split(";");
+    for (var i = 0; i < cookies.length; i++) {
+      let cookiePair = cookies[i].split("=");
+      if (name == decodeURIComponent(cookiePair[0]).trim()) {
+        return decodeURIComponent(cookiePair[1]);
+      }
+    }
+    return orDefault;
+  }
+  
+  function setCookie(name: string, value: any, options: any = {}) {
+    options = {
+      path: "/",
+      ...options,
+    };
+    if (!options.expires) {
+      let date = new Date();
+      date.setTime(date.getTime() + 1 * 24 * 60 * 60 * 1000);
+      options.expires = date;
+    }
+    if (options.expires instanceof Date) {
+      options.expires = options.expires.toUTCString();
+    }
+    options["SameSite"] = "Strict";
+    let updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+    for (let optionKey in options) {
+      updatedCookie += "; " + optionKey;
+      let optionValue = options[optionKey];
+      if (optionValue !== true) {
+        updatedCookie += "=" + optionValue;
+      }
+    }
+    updatedCookie += "; Secure";
+    document.cookie = updatedCookie;
+  }
+  
+  function delCookie(name: string, options: any = {}) {
+    let updatedCookie =
+      encodeURIComponent(name) + "=;  expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    if (options.expires) {
+      delete options.expires;
+    }
+    for (let optionKey in options) {
+      updatedCookie += "; " + optionKey;
+      let optionValue = options[optionKey];
+      if (optionValue !== true) {
+        updatedCookie += "=" + optionValue;
+      }
+    }
+    document.cookie = updatedCookie;
+  }
 
 function getDeskAPI() {
     var win = window as any;
@@ -111,6 +141,9 @@ function toggleDevTools() {
 }
 
 export const QinHead = {
+    getCookie,
+  setCookie,
+  delCookie,
     getDeskAPI,
     getLogged,
     log,

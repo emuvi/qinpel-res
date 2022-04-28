@@ -1,5 +1,27 @@
 import { QinArm } from "./qin-arm";
-import { QinDimension, QinGrandeur } from "./qin-head"
+
+export class QinPoint {
+    posX: number;
+    posY: number;
+};
+
+export class QinDimension {
+    width: number;
+    height: number;
+};
+
+export class QinBounds {
+    posX: number;
+    posY: number;
+    width: number;
+    height: number;
+};
+
+export enum QinGrandeur {
+    SMALL = "small",
+    MEDIUM = "medium",
+    LARGE = "large",
+}
 
 export const QinStyles = {
     ColorForeground: "#180027ff",
