@@ -1,4 +1,4 @@
-import { QinSkin, QinPoint } from "./qin-skin";
+import { QinPoint, QinSkin } from "./qin-skin";
 
 export class QinEvent {
   private _origin: HTMLElement;
