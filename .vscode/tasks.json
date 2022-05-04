@@ -14,7 +14,7 @@
     {
       "label": "Test",
       "type": "shell",
-      "command": "bash -v test.sh",
+      "command": "cmd /c test.bat",
       "group": {
         "kind": "test",
         "isDefault": true
