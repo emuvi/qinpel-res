@@ -362,6 +362,10 @@ function stopEvent(event: any) {
   if (event.preventDefault) {
     event.preventDefault();
   }
+  return stopPropagation(event);
+}
+
+function stopPropagation(event: any) {
   if (event.stopPropagation) {
     event.stopPropagation();
   }
@@ -596,7 +600,7 @@ function addAction(origin: HTMLElement, action: QinAction) {
     if (qinEvent.stop) {
       return stopEvent(ev);
     } else {
-      return true;
+      return stopPropagation(ev);
     }
   }
 
@@ -606,7 +610,7 @@ function addAction(origin: HTMLElement, action: QinAction) {
     if (qinEvent.stop) {
       return stopEvent(ev);
     } else {
-      return true;
+      return stopPropagation(ev);
     }
   }
 
@@ -616,7 +620,7 @@ function addAction(origin: HTMLElement, action: QinAction) {
     if (qinEvent.stop) {
       return stopEvent(ev);
     } else {
-      return true;
+      return stopPropagation(ev);
     }
   }
 
@@ -626,7 +630,7 @@ function addAction(origin: HTMLElement, action: QinAction) {
     if (qinEvent.stop) {
       return stopEvent(ev);
     } else {
-      return true;
+      return stopPropagation(ev);
     }
   }
 
@@ -636,7 +640,7 @@ function addAction(origin: HTMLElement, action: QinAction) {
     if (qinEvent.stop) {
       return stopEvent(ev);
     } else {
-      return true;
+      return stopPropagation(ev);
     }
   }
 
@@ -646,7 +650,7 @@ function addAction(origin: HTMLElement, action: QinAction) {
     if (qinEvent.stop) {
       return stopEvent(ev);
     } else {
-      return true;
+      return stopPropagation(ev);
     }
   }
 }
@@ -654,7 +658,6 @@ function addAction(origin: HTMLElement, action: QinAction) {
 function addActionMain(origin: HTMLElement, action: QinAction) {
   addAction(origin, (qinEvent: QinEvent) => {
     if (qinEvent.isMain) {
-      qinEvent.consumed();
       action(qinEvent);
     }
   });
@@ -1038,6 +1041,7 @@ function addScroller(target: HTMLElement, dragCalls?: QinPointerCalls) {
     if (document.onmousemove || document.ontouchmove) {
       return;
     }
+    stopPropagation(ev);
     if (dragCalls && dragCalls.onDouble && isEventMouseDouble(true, ev)) {
       dragCalls.onDouble();
       return;
