@@ -654,6 +654,7 @@ function addAction(origin: HTMLElement, action: QinAction) {
 function addActionMain(origin: HTMLElement, action: QinAction) {
   addAction(origin, (qinEvent: QinEvent) => {
     if (qinEvent.isMain) {
+      qinEvent.consumed();
       action(qinEvent);
     }
   });
