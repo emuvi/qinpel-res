@@ -24,8 +24,13 @@ export enum QinNature {
   TEXT = "TEXT",
 }
 
-function getTextLines(fromText: string): string[] {
-  return fromText.match(/[^\r\n]+/g);
+function makeQinUID(): string {
+  return (
+    "qin_uid_" +
+    Date.now() +
+    "_" +
+    fillToString(Math.floor(Math.random() * 10000), 5, "0", false)
+  );
 }
 
 function fillToString(
@@ -45,20 +50,15 @@ function fillToString(
   return result;
 }
 
-function makeQinUID(): string {
-  return (
-    "qin_uid_" +
-    Date.now() +
-    "_" +
-    fillToString(Math.floor(Math.random() * 10000), 5, "0", false)
-  );
+function getTextLines(fromText: string): string[] {
+  return fromText.match(/[^\r\n]+/g);
 }
 
-function getCSVRows(fromText: string, names?: string[]): string[][] | object[] {
+function getCSVRows(fromText: string): string[][] {
   var lines = getTextLines(fromText);
-  var result: string[][] | object[] = [];
+  var result: string[][] = [];
   for (let line of lines) {
-    let row: string[] | object = !names ? [] : {};
+    let row = new Array<string>();
     let inside_quotes = false;
     let column_value = "";
     let column_index = 0;
@@ -81,15 +81,7 @@ function getCSVRows(fromText: string, names?: string[]): string[][] | object[] {
           inside_quotes = true;
         } else if (actual == ",") {
           column_value = unmaskSpecialChars(column_value);
-          if (!names) {
-            (row as string[]).push(column_value);
-          } else {
-            let column_name = "col_" + column_index;
-            if (column_index < names.length) {
-              column_name = names[column_index];
-            }
-            (row as object)[column_name] = column_value;
-          }
+          row.push(column_value);
           column_value = "";
           column_index++;
         } else {
@@ -98,17 +90,8 @@ function getCSVRows(fromText: string, names?: string[]): string[][] | object[] {
       }
     }
     column_value = unmaskSpecialChars(column_value);
-    if (!names) {
-      (row as string[]).push(column_value);
-      (result as string[][]).push(row as string[]);
-    } else {
-      let column_name = "col_" + column_index;
-      if (column_index < names.length) {
-        column_name = names[column_index];
-      }
-      (row as object)[column_name] = column_value;
-      (result as object[]).push(row as object);
-    }
+    row.push(column_value);
+    result.push(row);
   }
   return result;
 }
@@ -165,9 +148,9 @@ function parseParameters(source: string): string[] {
 }
 
 export const QinBody = {
-  getTextLines,
-  fillToString,
   makeQinUID,
+  fillToString,
+  getTextLines,
   getCSVRows,
   maskSpecialChars,
   unmaskSpecialChars,
