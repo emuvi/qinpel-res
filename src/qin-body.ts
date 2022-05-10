@@ -27,10 +27,32 @@ export enum QinNature {
 function makeQinUID(): string {
   return (
     "qin_uid_" +
-    Date.now() +
+    getLastChars(Date.now() + "", 4, "0", false) +
     "_" +
     fillToString(Math.floor(Math.random() * 10000), 5, "0", false)
   );
+}
+
+function makeQindredUID(qindred: string): string {
+  return (
+    qindred +
+    "_qindred_" +
+    getLastChars(Date.now() + "", 4, "0", false) +
+    "_" +
+    fillToString(Math.floor(Math.random() * 10000), 5, "0", false)
+  );
+}
+
+function getLastChars(
+  source: string,
+  count: number,
+  fillWith: string = " ",
+  atEnd: boolean = true
+): string {
+  if (source.length < count) {
+    return fillToString(source, count, fillWith, atEnd);
+  }
+  return source.substring(source.length - count);
 }
 
 function fillToString(
@@ -149,6 +171,8 @@ function parseParameters(source: string): string[] {
 
 export const QinBody = {
   makeQinUID,
+  makeQindredUID,
+  getLastChars,
   fillToString,
   getTextLines,
   getCSVRows,
