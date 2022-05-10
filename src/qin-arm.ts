@@ -1,5 +1,11 @@
 import { QinPoint, QinSkin } from "./qin-skin";
 
+export enum QinActionKind {
+  MAIN = "MAIN",
+  MIDI = "MIDI",
+  MENU = "MENU",
+}
+
 export class QinEvent {
   private _origin: HTMLElement;
   private _start: boolean;

@@ -1,3 +1,4 @@
+export { QinActionKind } from './qin-arm';
 export { QinEvent } from './qin-arm';
 export { QinEventType } from './qin-arm';
 export { QinAction } from './qin-arm';
