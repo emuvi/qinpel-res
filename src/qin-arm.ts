@@ -665,6 +665,7 @@ function addActionMain(origin: HTMLElement, action: QinAction) {
   addAction(origin, (qinEvent: QinEvent) => {
     if (qinEvent.isMain) {
       action(qinEvent);
+      qinEvent.consumed();
     }
   });
 }
@@ -673,6 +674,7 @@ function addActionMainKey(origin: HTMLElement, action: QinAction) {
   addAction(origin, (qinEvent: QinEvent) => {
     if (qinEvent.isMainKey) {
       action(qinEvent);
+      qinEvent.consumed();
     }
   });
 }
@@ -681,6 +683,7 @@ function addActionMainMouse(origin: HTMLElement, action: QinAction) {
   addAction(origin, (qinEvent: QinEvent) => {
     if (qinEvent.isMainMouse) {
       action(qinEvent);
+      qinEvent.consumed();
     }
   });
 }
@@ -689,6 +692,7 @@ function addActionMainTouch(origin: HTMLElement, action: QinAction) {
   addAction(origin, (qinEvent: QinEvent) => {
     if (qinEvent.isMainMouse) {
       action(qinEvent);
+      qinEvent.consumed();
     }
   });
 }
@@ -697,6 +701,7 @@ function addActionMainPoint(origin: HTMLElement, action: QinAction) {
   addAction(origin, (qinEvent: QinEvent) => {
     if (qinEvent.isMainPoint) {
       action(qinEvent);
+      qinEvent.consumed();
     }
   });
 }
@@ -705,6 +710,7 @@ function addActionMidi(origin: HTMLElement, action: QinAction) {
   addAction(origin, (qinEvent: QinEvent) => {
     if (qinEvent.isMidi) {
       action(qinEvent);
+      qinEvent.consumed();
     }
   });
 }
@@ -713,6 +719,7 @@ function addActionMidiKey(origin: HTMLElement, action: QinAction) {
   addAction(origin, (qinEvent: QinEvent) => {
     if (qinEvent.isMidiKey) {
       action(qinEvent);
+      qinEvent.consumed();
     }
   });
 }
@@ -721,6 +728,7 @@ function addActionMidiMouse(origin: HTMLElement, action: QinAction) {
   addAction(origin, (qinEvent: QinEvent) => {
     if (qinEvent.isMidiMouse) {
       action(qinEvent);
+      qinEvent.consumed();
     }
   });
 }
@@ -729,6 +737,7 @@ function addActionMidiTouch(origin: HTMLElement, action: QinAction) {
   addAction(origin, (qinEvent: QinEvent) => {
     if (qinEvent.isMidiMouse) {
       action(qinEvent);
+      qinEvent.consumed();
     }
   });
 }
@@ -737,6 +746,7 @@ function addActionMidiPoint(origin: HTMLElement, action: QinAction) {
   addAction(origin, (qinEvent: QinEvent) => {
     if (qinEvent.isMidiPoint) {
       action(qinEvent);
+      qinEvent.consumed();
     }
   });
 }
@@ -745,6 +755,7 @@ function addActionMenu(origin: HTMLElement, action: QinAction) {
   addAction(origin, (qinEvent: QinEvent) => {
     if (qinEvent.isMenu) {
       action(qinEvent);
+      qinEvent.consumed();
     }
   });
 }
@@ -753,6 +764,7 @@ function addActionMenuKey(origin: HTMLElement, action: QinAction) {
   addAction(origin, (qinEvent: QinEvent) => {
     if (qinEvent.isMenuKey) {
       action(qinEvent);
+      qinEvent.consumed();
     }
   });
 }
@@ -761,6 +773,7 @@ function addActionMenuMouse(origin: HTMLElement, action: QinAction) {
   addAction(origin, (qinEvent: QinEvent) => {
     if (qinEvent.isMenuMouse) {
       action(qinEvent);
+      qinEvent.consumed();
     }
   });
 }
@@ -769,6 +782,7 @@ function addActionMenuTouch(origin: HTMLElement, action: QinAction) {
   addAction(origin, (qinEvent: QinEvent) => {
     if (qinEvent.isMenuMouse) {
       action(qinEvent);
+      qinEvent.consumed();
     }
   });
 }
@@ -777,6 +791,7 @@ function addActionMenuPoint(origin: HTMLElement, action: QinAction) {
   addAction(origin, (qinEvent: QinEvent) => {
     if (qinEvent.isMenuPoint) {
       action(qinEvent);
+      qinEvent.consumed();
     }
   });
 }
@@ -795,13 +810,85 @@ function addActionsMain(origins: HTMLElement[], action: QinAction) {
 
 function addActionsMainKey(origins: HTMLElement[], action: QinAction) {
   for (const element of origins) {
-    addActionMain(element, action);
+    addActionMainKey(element, action);
+  }
+}
+
+function addActionsMainMouse(origins: HTMLElement[], action: QinAction) {
+  for (const element of origins) {
+    addActionMainMouse(element, action);
+  }
+}
+
+function addActionsMainTouch(origins: HTMLElement[], action: QinAction) {
+  for (const element of origins) {
+    addActionMainPoint(element, action);
   }
 }
 
 function addActionsMainPoint(origins: HTMLElement[], action: QinAction) {
   for (const element of origins) {
-    addActionMain(element, action);
+    addActionMainPoint(element, action);
+  }
+}
+
+function addActionsMidi(origins: HTMLElement[], action: QinAction) {
+  for (const element of origins) {
+    addActionMidi(element, action);
+  }
+}
+
+function addActionsMidiKey(origins: HTMLElement[], action: QinAction) {
+  for (const element of origins) {
+    addActionMidiKey(element, action);
+  }
+}
+
+function addActionsMidiMouse(origins: HTMLElement[], action: QinAction) {
+  for (const element of origins) {
+    addActionMidiMouse(element, action);
+  }
+}
+
+function addActionsMidiTouch(origins: HTMLElement[], action: QinAction) {
+  for (const element of origins) {
+    addActionMidiPoint(element, action);
+  }
+}
+
+function addActionsMidiPoint(origins: HTMLElement[], action: QinAction) {
+  for (const element of origins) {
+    addActionMidiPoint(element, action);
+  }
+}
+
+function addActionsMenu(origins: HTMLElement[], action: QinAction) {
+  for (const element of origins) {
+    addActionMenu(element, action);
+  }
+}
+
+function addActionsMenuKey(origins: HTMLElement[], action: QinAction) {
+  for (const element of origins) {
+    addActionMenuKey(element, action);
+  }
+}
+
+function addActionsMenuMouse(origins: HTMLElement[], action: QinAction) {
+  for (const element of origins) {
+    addActionMenuMouse(element, action);
+  }
+}
+
+function addActionsMenuTouch(origins: HTMLElement[], action: QinAction) {
+  for (const element of origins) {
+    addActionMenuPoint(element, action);
+  }
+}
+
+function addActionsMenuPoint(origins: HTMLElement[], action: QinAction) {
+  for (const element of origins) {
+    addActionMenuPoint(element, action);
   }
 }
 
@@ -1183,7 +1270,19 @@ export const QinArm = {
   addActions,
   addActionsMain,
   addActionsMainKey,
+  addActionsMainMouse,
+  addActionsMainTouch,
   addActionsMainPoint,
+  addActionsMidi,
+  addActionsMidiKey,
+  addActionsMidiMouse,
+  addActionsMidiTouch,
+  addActionsMidiPoint,
+  addActionsMenu,
+  addActionsMenuKey,
+  addActionsMenuMouse,
+  addActionsMenuTouch,
+  addActionsMenuPoint,
   addMover,
   addResizer,
   addScroller,
