@@ -26,9 +26,12 @@ export enum QinGrandeur {
 export const QinStyles = {
   ColorForeground: "#180027ff",
   ColorBackground: "#fffcf9ff",
-  ColorInactive: "#fcf9ffff",
-  ColorActive: "#fdededff",
+  ColorInactive: "#ffecffff",
+  ColorActive: "#ffececff",
   ColorAccent: "#ae0000ff",
+  ColorBlocked: "#dcdcdcff",
+  ColorEntered: "#ecffecff",
+  ColorAttend: "#00ae00ff",
   ColorSelected: "#5d72de8f",
   FontName: "SourceSansPro",
   FontSize: "16px",
@@ -53,19 +56,34 @@ function styleAsBase(el: HTMLElement) {
   el.style.fontSize = "16px";
 }
 
-function styleAsEdit(el: HTMLElement) {
+function styleAsEditable(el: HTMLElement) {
   styleAsBase(el);
+  el.style.backgroundColor = QinStyles.ColorInactive;
   el.style.border = "1px solid " + QinStyles.ColorForeground;
   el.style.borderRadius = "3px";
-  el.style.backgroundColor = QinStyles.ColorInactive;
+  el.style.outline = "none";
   el.addEventListener("focus", () => {
-    el.style.outline = "none";
     el.style.backgroundColor = QinStyles.ColorActive;
     el.style.border = "1px solid " + QinStyles.ColorAccent;
   });
   el.addEventListener("focusout", () => {
-    el.style.outline = "none";
     el.style.backgroundColor = QinStyles.ColorInactive;
+    el.style.border = "1px solid " + QinStyles.ColorForeground;
+  });
+}
+
+function styleAsReadOnly(el: HTMLElement) {
+  styleAsBase(el);
+  el.style.backgroundColor = QinStyles.ColorBlocked;
+  el.style.border = "1px solid " + QinStyles.ColorForeground;
+  el.style.borderRadius = "3px";
+  el.style.outline = "none";
+  el.addEventListener("focus", () => {
+    el.style.backgroundColor = QinStyles.ColorEntered;
+    el.style.border = "1px solid " + QinStyles.ColorAttend;
+  });
+  el.addEventListener("focusout", () => {
+    el.style.backgroundColor = QinStyles.ColorBlocked;
     el.style.border = "1px solid " + QinStyles.ColorForeground;
   });
 }
@@ -238,7 +256,8 @@ export const QinSkin = {
   styles: QinStyles,
   styleAsBody,
   styleAsBase,
-  styleAsEdit,
+  styleAsEditable,
+  styleAsReadOnly,
   styleMaxSizeForNotOverFlow,
   styleSize,
   styleFlexMax,
