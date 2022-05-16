@@ -35,8 +35,15 @@ function newColumn(items?: HTMLElement[]): HTMLDivElement {
   return result;
 }
 
+function newSpan(text: string): HTMLSpanElement {
+  const result = document.createElement("div");
+  result.innerText = text;
+  return result;
+}
+
 export const QinLegs = {
   newRow,
   newLine,
   newColumn,
+  newSpan,
 };
