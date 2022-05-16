@@ -1227,7 +1227,7 @@ function addScroller(target: HTMLElement, dragCalls?: QinPointerCalls) {
   }
 }
 
-export const QinArm = {
+export const QinArms = {
   stopEvent,
   makeEventMousePoint,
   makeEventTouch,

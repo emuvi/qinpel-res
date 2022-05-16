@@ -1,4 +1,4 @@
-import { QinArm } from "./qin-arm";
+import { QinArms } from "./qin-arms";
 
 export class QinPoint {
   posX: number;
@@ -172,7 +172,7 @@ function showAllIFrames() {
 function disableSelection(element: HTMLElement) {
   element.style.userSelect = "none";
   element.style.webkitUserSelect = "none";
-  element.onselectstart = QinArm.stopEvent;
+  element.onselectstart = QinArms.stopEvent;
 }
 
 function clearSelection() {
