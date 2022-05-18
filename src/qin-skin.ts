@@ -200,8 +200,7 @@ function isElementVisibleInScroll(element: HTMLElement) {
     }
     if (
       element.clientHeight >
-      element.parentElement.clientHeight -
-        (element.offsetTop - element.parentElement.scrollTop)
+      element.parentElement.clientHeight - (element.offsetTop - element.parentElement.scrollTop)
     ) {
       return false;
     }
