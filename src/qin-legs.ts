@@ -41,9 +41,16 @@ function newSpan(text: string): HTMLSpanElement {
   return result;
 }
 
+function newImg(src: string): HTMLImageElement {
+  const result = document.createElement("img");
+  result.src = src;
+  return result;
+}
+
 export const QinLegs = {
   newRow,
   newLine,
   newColumn,
   newSpan,
+  newImg,
 };
