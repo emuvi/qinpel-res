@@ -251,6 +251,14 @@ function getDimensionLarge(): QinDimension {
   return dimensionLarge;
 }
 
+function applyStyles(element: HTMLElement, styles: CSSStyleDeclaration) {
+  if (element && styles) {
+    for (const key in styles) {
+      element.style[key] = styles[key];
+    }
+  }
+}
+
 export const QinSkin = {
   styles: QinStyles,
   styleAsBody,
@@ -273,4 +281,5 @@ export const QinSkin = {
   getDimensionSmall,
   getDimensionMedium,
   getDimensionLarge,
+  applyStyles,
 };
