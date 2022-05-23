@@ -89,7 +89,7 @@ function logError(error: any, origin: string) {
 }
 
 function getErrorMessage(error: any, origin: string) {
-  return getTreatMessage("Problem with", error, origin);
+  return getTreatMessage("Problem", error, origin);
 }
 
 function logWarning(error: any, origin: string) {
@@ -97,39 +97,32 @@ function logWarning(error: any, origin: string) {
 }
 
 function getWarningMessage(error: any, origin: string) {
-  return getTreatMessage("Checkout this", error, origin);
-}
-
-function logSupport(error: any, origin: string) {
-  log(getSupportMessage(error, origin));
-}
-
-function getSupportMessage(error: any, origin: string) {
-  return getTreatMessage("Need Support on", error, origin);
+  return getTreatMessage("Attention", error, origin);
 }
 
 function getTreatMessage(prefix: string, error: any, origin: string) {
-  var result = prefix;
+  var result = "";
   if (error && error.why) {
-    result += "; Why: ";
-    error = error.why;
-  } else if (error && error.response && error.response.data) {
-    result += "; Got: ";
-    error = error.response.data;
+    result += " on reason " + getMessageOrData(error.why);
   }
-  if (!(typeof error == "string" || error instanceof String)) {
-    result += "; Data: ";
-    error = JSON.stringify(error);
+  if (error && error.response && error.response.data) {
+    if (result) {
+      result += "\nAnd";
+    }
+    result += " was returned" + getMessageOrData(error.response.data);
   }
-  result += error;
   if (origin) {
-    result += "; Origin: " + origin;
+    result += "\nBy origin: " + origin;
   }
-  const stack = new Error("").stack;
-  if (stack) {
-    result += "; Stack: " + stack;
+  return prefix + result;
+}
+
+function getMessageOrData(of: any): string {
+  if (!(typeof of == "string" || of instanceof String)) {
+    return " with data:\n" + JSON.stringify(of);
+  } else {
+    return " of:\n" + of;
   }
-  return result;
 }
 
 function toggleDevTools() {
@@ -151,8 +144,6 @@ export const QinHead = {
   getErrorMessage,
   logWarning,
   getWarningMessage,
-  logSupport,
-  getSupportMessage,
   getTreatMessage,
   toggleDevTools,
 };
