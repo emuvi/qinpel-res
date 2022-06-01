@@ -108,19 +108,23 @@ function getWarningMessage(error: any, origin: string) {
   return getTreatMessage("Attention", error, origin);
 }
 
-function getTreatMessage(prefix: string, error: any, origin: string) {
+function getTreatMessage(prefix: string, value: any, origin: string) {
   var result = "";
-  if (error && error.why) {
-    result += " on " + getMessageOrData(error.why);
-  }
-  if (error && error.message) {
-    result += " on " + getMessageOrData(error.message);
-  }
-  if (error && error.response && error.response.data) {
-    if (result) {
-      result += "\nAnd";
+  if (typeof value == "string" || value instanceof String) {
+    result = value.toString();
+  } else {
+    if (value && value.why) {
+      result += " on " + getMessageOrData(value.why);
     }
-    result += " was returned" + getMessageOrData(error.response.data);
+    if (value && value.message) {
+      result += " on " + getMessageOrData(value.message);
+    }
+    if (value && value.response && value.response.data) {
+      if (result) {
+        result += "\nAnd";
+      }
+      result += " was returned" + getMessageOrData(value.response.data);
+    }
   }
   if (origin) {
     result += "\nBy origin: " + origin;
