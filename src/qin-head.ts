@@ -109,15 +109,15 @@ function getWarningMessage(error: any, origin: string) {
 }
 
 function getTreatMessage(prefix: string, value: any, origin: string) {
-  var result = "";
+  var result = " on ";
   if (typeof value == "string" || value instanceof String) {
-    result = value.toString();
+    result += value.toString();
   } else {
     if (value && value.why) {
-      result += " on " + getMessageOrData(value.why);
+      result += getMessageOrData(value.why);
     }
     if (value && value.message) {
-      result += " on " + getMessageOrData(value.message);
+      result += getMessageOrData(value.message);
     }
     if (value && value.response && value.response.data) {
       if (result) {
