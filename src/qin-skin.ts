@@ -251,7 +251,7 @@ function getDimensionLarge(): QinDimension {
   return dimensionLarge;
 }
 
-function applyStyles(element: HTMLElement, styles: CSSStyleDeclaration) {
+function applyStyles(element: HTMLElement, styles: Partial<CSSStyleDeclaration>) {
   if (element && styles) {
     for (const key in styles) {
       element.style[key] = styles[key];
