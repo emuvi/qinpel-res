@@ -73,7 +73,11 @@ function fillToString(
 }
 
 function getTextLines(fromText: string): string[] {
-  return fromText.match(/[^\r\n]+/g);
+  if (fromText) {
+    return fromText.match(/[^\r\n]+/g);
+  } else {
+    return [];
+  }
 }
 
 function getCSVRows(fromText: string): string[][] {
