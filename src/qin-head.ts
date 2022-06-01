@@ -133,10 +133,10 @@ function getTreatMessage(prefix: string, value: any, origin: string) {
 }
 
 function getMessageOrData(of: any): string {
-  if (!(typeof of == "string" || of instanceof String)) {
-    return " with data:\n" + JSON.stringify(of);
+  if (typeof of == "string" || of instanceof String) {
+    return of.toString();
   } else {
-    return " of:\n" + of;
+    return " with data:\n" + JSON.stringify(of);
   }
 }
 
