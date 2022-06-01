@@ -105,6 +105,9 @@ function getTreatMessage(prefix: string, error: any, origin: string) {
   if (error && error.why) {
     result += " on reason " + getMessageOrData(error.why);
   }
+  if (error && error.message) {
+    result += " on reason " + getMessageOrData(error.message);
+  }
   if (error && error.response && error.response.data) {
     if (result) {
       result += "\nAnd";
