@@ -84,6 +84,14 @@ function log(message: string) {
   } catch (_) {}
 }
 
+function logInfo(error: any, origin: string) {
+  log(getInfoMessage(error, origin));
+}
+
+function getInfoMessage(info: any, origin: string) {
+  return getTreatMessage("Look", info, origin);
+}
+
 function logError(error: any, origin: string) {
   log(getErrorMessage(error, origin));
 }
@@ -103,10 +111,10 @@ function getWarningMessage(error: any, origin: string) {
 function getTreatMessage(prefix: string, error: any, origin: string) {
   var result = "";
   if (error && error.why) {
-    result += " on reason " + getMessageOrData(error.why);
+    result += " on " + getMessageOrData(error.why);
   }
   if (error && error.message) {
-    result += " on reason " + getMessageOrData(error.message);
+    result += " on " + getMessageOrData(error.message);
   }
   if (error && error.response && error.response.data) {
     if (result) {
@@ -143,6 +151,8 @@ export const QinHead = {
   getDeskAPI,
   getLogged,
   log,
+  logInfo,
+  getInfoMessage,
   logError,
   getErrorMessage,
   logWarning,
