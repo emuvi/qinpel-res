@@ -109,7 +109,7 @@ function getWarningMessage(error: any, origin: string) {
 }
 
 function getTreatMessage(prefix: string, value: any, origin: string) {
-  var result = " on ";
+  var result = " on: ";
   if (typeof value == "string" || value instanceof String) {
     result += value.toString();
   } else {
