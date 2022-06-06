@@ -1,3 +1,5 @@
+import { QinBody } from "./qin-body";
+
 export function tr(of: string): string {
   return dictionary.get(of) || of;
 }
@@ -8,7 +10,19 @@ function translate(of: string, to: string) {
   dictionary.set(of, to);
 }
 
-function forget() {
+function translations(dictionary: string) {
+  let lines = QinBody.getTextLines(dictionary);
+  for (let line of lines) {
+    let index = line.indexOf("=");
+    if (index > 0) {
+      let of = line.substring(0, index);
+      let to = line.substring(index + 1);
+      translate(of, to);
+    }
+  }
+}
+
+function forgetAll() {
   dictionary.clear();
 }
 
@@ -164,7 +178,8 @@ function toggleDevTools() {
 
 export const QinHead = {
   translate,
-  forget,
+  translations,
+  forgetAll,
   getCookie,
   setCookie,
   delCookie,
