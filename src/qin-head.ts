@@ -117,7 +117,7 @@ function logInfo(error: any, origin: string) {
 }
 
 function getInfoMessage(info: any, origin: string) {
-  return getTreatMessage("Look", info, origin);
+  return getTreatMessage(tr("Look"), info, origin);
 }
 
 function logError(error: any, origin: string) {
@@ -125,7 +125,7 @@ function logError(error: any, origin: string) {
 }
 
 function getErrorMessage(error: any, origin: string) {
-  return getTreatMessage("Problem", error, origin);
+  return getTreatMessage(tr("Problem"), error, origin);
 }
 
 function logWarning(error: any, origin: string) {
@@ -133,11 +133,11 @@ function logWarning(error: any, origin: string) {
 }
 
 function getWarningMessage(error: any, origin: string) {
-  return getTreatMessage("Attention", error, origin);
+  return getTreatMessage(tr("Attention"), error, origin);
 }
 
 function getTreatMessage(prefix: string, value: any, origin: string) {
-  var result = " on: ";
+  var result = tr(" on: ");
   if (typeof value == "string" || value instanceof String) {
     result += value.toString();
   } else {
@@ -149,13 +149,13 @@ function getTreatMessage(prefix: string, value: any, origin: string) {
     }
     if (value && value.response && value.response.data) {
       if (result) {
-        result += "\nAnd";
+        result += "\n" + tr("And");
       }
-      result += " was returned" + getMessageOrData(value.response.data);
+      result += tr(" was returned") + getMessageOrData(value.response.data);
     }
   }
   if (origin) {
-    result += "\nBy origin: " + origin;
+    result += "\n" + tr("By origin: ") + origin;
   }
   return prefix + result;
 }
@@ -164,7 +164,7 @@ function getMessageOrData(of: any): string {
   if (typeof of == "string" || of instanceof String) {
     return of.toString();
   } else {
-    return " with data:\n" + JSON.stringify(of);
+    return tr(" with data:") + "\n" + JSON.stringify(of);
   }
 }
 
