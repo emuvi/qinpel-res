@@ -1,10 +1,10 @@
 import { QinBody } from "./qin-body";
 
+const dictionary: Map<string, string> = new Map();
+
 export function tr(of: string): string {
   return dictionary.get(of) || of;
 }
-
-const dictionary: Map<string, string> = new Map();
 
 function translate(of: string, to: string) {
   dictionary.set(of, to);
