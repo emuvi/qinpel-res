@@ -12,6 +12,7 @@ export { QinFilesNature } from './qin-foot';
 export { QinFilesOperation } from './qin-foot';
 export { QinFilesDescriptor } from './qin-foot';
 export { QinFoot } from './qin-foot';
+export { tr } from './qin-head';
 export { QinHead } from './qin-head';
 export { QinLegs } from './qin-legs';
 export { QinPoint } from './qin-skin';

@@ -1,0 +1,13 @@
+#!/bin/liz
+
+print("Resetting...")
+Liz.run("clean")
+if Liz.is_win() then
+  Ext = ".cmd"
+else
+  Ext = ""
+end
+Liz.cmd("npm" .. Ext, { "install" })
+print("Done install dependencies")
+Liz.run("test")
+print("Done reset application")

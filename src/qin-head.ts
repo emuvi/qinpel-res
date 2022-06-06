@@ -1,3 +1,17 @@
+export function tr(of: string): string {
+  return dictionary.get(of) || of;
+}
+
+const dictionary: Map<string, string> = new Map();
+
+function translate(of: string, to: string) {
+  dictionary.set(of, to);
+}
+
+function forget() {
+  dictionary.clear();
+}
+
 function getCookie(name: string, orDefault?: string): string {
   let cookies = document.cookie.split(";");
   for (var i = 0; i < cookies.length; i++) {
@@ -149,6 +163,8 @@ function toggleDevTools() {
 }
 
 export const QinHead = {
+  translate,
+  forget,
   getCookie,
   setCookie,
   delCookie,
