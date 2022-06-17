@@ -75,19 +75,26 @@ function styleAsEditable(el: HTMLElement) {
   });
 }
 
-function styleAsActionable(el: HTMLElement) {
+export type ActionableStyles = {
+  ColorForeground: string;
+  ColorInactiveAct: string;
+  ColorActiveAct: string;
+  ColorAccentAct: string;
+};
+
+function styleAsActionable(el: HTMLElement, styles: ActionableStyles = QinStyles) {
   styleAsBase(el);
-  el.style.backgroundColor = QinStyles.ColorInactiveAct;
-  el.style.border = "1px solid " + QinStyles.ColorForeground;
+  el.style.backgroundColor = styles.ColorInactiveAct;
+  el.style.border = "1px solid " + styles.ColorForeground;
   el.style.borderRadius = "3px";
   el.style.outline = "none";
   el.addEventListener("focus", () => {
-    el.style.backgroundColor = QinStyles.ColorActiveAct;
-    el.style.border = "1px solid " + QinStyles.ColorAccentAct;
+    el.style.backgroundColor = styles.ColorActiveAct;
+    el.style.border = "1px solid " + styles.ColorAccentAct;
   });
   el.addEventListener("focusout", () => {
-    el.style.backgroundColor = QinStyles.ColorInactiveAct;
-    el.style.border = "1px solid " + QinStyles.ColorForeground;
+    el.style.backgroundColor = styles.ColorInactiveAct;
+    el.style.border = "1px solid " + styles.ColorForeground;
   });
 }
 
