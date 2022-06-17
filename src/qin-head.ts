@@ -3,7 +3,6 @@ import { QinBody } from "./qin-body";
 const dictionary: Map<string, string> = new Map();
 
 export function tr(of: string): string {
-  console.log("tr: " + of);
   return dictionary.get(of) || of;
 }
 
