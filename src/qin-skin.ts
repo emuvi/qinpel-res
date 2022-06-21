@@ -84,14 +84,14 @@ function styleAsEditable(el: HTMLElement) {
   });
 }
 
-export type ActionableStyles = {
+export type QinActionableStyles = {
   ColorForeground: string;
   ColorInactiveAct: string;
   ColorActiveAct: string;
   ColorAccentAct: string;
 };
 
-function styleAsActionable(el: HTMLElement, styles: ActionableStyles = QinStyles) {
+function styleAsActionable(el: HTMLElement, styles: QinActionableStyles = QinStyles) {
   styleAsBase(el);
   el.style.backgroundColor = styles.ColorInactiveAct;
   el.style.border = "1px solid " + styles.ColorForeground;
