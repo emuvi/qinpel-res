@@ -40,6 +40,15 @@ export const QinStyles = {
   FontSize: "16px",
 };
 
+export const QinStylesPicker = {
+  ColorPickerForeground: "#180027ff",
+  ColorPickerAccentAct: "#0000aeff",
+  ColorUnPickedInactiveAct: "#f0f7ffff",
+  ColorUnPickedActiveAct: "#ddddffff",
+  ColorPickedInactiveAct: "#b9dbffff",
+  ColorPickedActiveAct: "#c4c4ffff",
+};
+
 function styleAsBody(el: HTMLElement) {
   el.style.position = "absolute";
   el.style.top = "0px";
@@ -180,17 +189,17 @@ function getWindowSizeStyle(): QinGrandeur {
 }
 
 function hideAllIFrames() {
-  var doc_iframes = document.getElementsByTagName("iframe");
-  for (let i = 0; i < doc_iframes.length; i++) {
-    let doc_iframe = doc_iframes[i];
+  var docIFrames = document.getElementsByTagName("iframe");
+  for (let i = 0; i < docIFrames.length; i++) {
+    let doc_iframe = docIFrames[i];
     doc_iframe.style.visibility = "hidden";
   }
 }
 
 function showAllIFrames() {
-  var doc_iframes = document.getElementsByTagName("iframe");
-  for (let i = 0; i < doc_iframes.length; i++) {
-    let doc_iframe = doc_iframes[i];
+  var docIFrames = document.getElementsByTagName("iframe");
+  for (let i = 0; i < docIFrames.length; i++) {
+    let doc_iframe = docIFrames[i];
     doc_iframe.style.visibility = "visible";
   }
 }
