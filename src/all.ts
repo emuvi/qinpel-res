@@ -20,6 +20,7 @@ export { QinDimension } from './qin-skin';
 export { QinBounds } from './qin-skin';
 export { QinGrandeur } from './qin-skin';
 export { QinStyles } from './qin-skin';
+export { QinStylesPicker } from './qin-skin';
 export { ActionableStyles } from './qin-skin';
 export { QinSkin } from './qin-skin';
 export { QinSoul } from './qin-soul';
