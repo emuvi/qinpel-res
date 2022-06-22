@@ -26,7 +26,7 @@ export enum QinGrandeur {
 export const QinStyles = {
   ColorForeground: "#180027ff",
   ColorBackground: "#fffcf9ff",
-  ColorInactive: "#fff0ffff",
+  ColorInactive: "#fff7ffff",
   ColorActive: "#fff0f0ff",
   ColorAccent: "#ae0000ff",
   ColorInactiveAct: "#f0f7ffff",
@@ -45,8 +45,8 @@ export const QinStylesPicker = {
   ColorPickerAccentAct: "#0000aeff",
   ColorUnPickedInactiveAct: "#f0f7ffff",
   ColorUnPickedActiveAct: "#ddddffff",
-  ColorPickedInactiveAct: "#b9dbffff",
-  ColorPickedActiveAct: "#c4c4ffff",
+  ColorPickedInactiveAct: "#85c0ffff",
+  ColorPickedActiveAct: "#8f8fffff",
 };
 
 function styleAsBody(el: HTMLElement) {
