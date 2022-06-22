@@ -170,6 +170,9 @@ function parseParameters(source: string): string[] {
       }
     }
   }
+  if (actual) {
+    result.push(actual);
+  }
   return result;
 }
 
